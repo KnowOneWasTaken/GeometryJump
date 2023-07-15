@@ -1,0 +1,49 @@
+class Spike extends Box {
+  int rotation = 0;
+  Spike(int x, int y, int w, int h, int id) {
+    super(x, y, w, h, id);
+    hitbox.fest = false;
+  }
+  Spike(int x, int y, int w, int h, int id, int rotation) {
+    super(x, y, w, h, id);
+    hitbox.fest = false;
+    this.rotation = rotation;
+  }
+  Spike() {
+    super(0, 0, 0, 0, -1);
+    hitbox.fest = false;
+  }
+
+  @Override void show() {
+    PImage spikeRotation = spike;
+    switch(rotation) {
+    case 0:
+      break;
+    case 1:
+      spikeRotation = cam.rotateImage(spikeRotation);
+      break;
+    case 2:
+      spikeRotation = cam.rotateImage(spikeRotation);
+      spikeRotation = cam.rotateImage(spikeRotation);
+      break;
+    case 3:
+      spikeRotation = cam.rotateImage(spikeRotation);
+      spikeRotation = cam.rotateImage(spikeRotation);
+      spikeRotation = cam.rotateImage(spikeRotation);
+      break;
+    }
+    for (int i = 0; i < blockW; i++) {
+      for (int j = 0; j < blockH; j++) {
+        cam.drawImage(spikeRotation, x+i*blockSize, y+j*blockSize, blockSize, blockSize);
+        break; //nach oben
+      }
+    }
+  }
+  @Override void showGlow() {
+    for (int i = 0; i < blockW; i++) {
+      for (int j = 0; j < blockH; j++) {
+        cam.drawImage(spikeGlow, int(x+i*blockSize-0.5*blockSize), int(y+j*blockSize-0.5*blockSize), blockSize*2, blockSize*2);
+      }
+    }
+  }
+}

@@ -558,506 +558,506 @@
     "class": "wall"
   },
   {
-    "x": 0,
-    "y": 2,
+    "x": 1,
+    "y": 0,
     "id": 93,
     "class": "wall"
   },
   {
-    "x": 1,
+    "x": 0,
     "y": 0,
     "id": 94,
     "class": "wall"
   },
   {
-    "x": 0,
-    "y": 0,
-    "id": 95,
-    "class": "wall"
-  },
-  {
     "x": -13,
     "y": 8,
-    "id": 96,
+    "id": 95,
     "class": "spike"
   },
   {
     "x": -14,
     "y": 8,
-    "id": 97,
+    "id": 96,
     "class": "spike"
   },
   {
     "x": -15,
     "y": 8,
-    "id": 98,
+    "id": 97,
     "class": "spike"
   },
   {
     "x": -16,
     "y": 8,
-    "id": 99,
+    "id": 98,
     "class": "spike"
   },
   {
     "x": 21,
     "y": 8,
-    "id": 100,
+    "id": 99,
     "class": "spike"
   },
   {
     "x": 19,
     "y": 8,
-    "id": 101,
+    "id": 100,
     "class": "spike"
   },
   {
     "x": 20,
     "y": 8,
-    "id": 102,
+    "id": 101,
     "class": "spike"
   },
   {
     "x": 18,
     "y": 8,
-    "id": 103,
+    "id": 102,
     "class": "spike"
   },
   {
     "x": 17,
     "y": 8,
-    "id": 104,
+    "id": 103,
     "class": "spike"
   },
   {
     "x": 16,
     "y": 8,
-    "id": 105,
+    "id": 104,
     "class": "spike"
   },
   {
     "x": 15,
     "y": 8,
-    "id": 106,
+    "id": 105,
     "class": "spike"
   },
   {
     "x": 14,
     "y": 8,
-    "id": 107,
+    "id": 106,
     "class": "spike"
   },
   {
     "x": 13,
     "y": 8,
-    "id": 108,
+    "id": 107,
     "class": "spike"
   },
   {
     "x": 12,
     "y": 8,
-    "id": 109,
+    "id": 108,
     "class": "spike"
   },
   {
     "x": 11,
     "y": 8,
-    "id": 110,
+    "id": 109,
     "class": "spike"
   },
   {
     "x": 10,
     "y": 8,
-    "id": 111,
+    "id": 110,
     "class": "spike"
   },
   {
     "x": 9,
     "y": 8,
-    "id": 112,
+    "id": 111,
     "class": "spike"
   },
   {
     "x": 7,
     "y": 8,
-    "id": 113,
+    "id": 112,
     "class": "spike"
   },
   {
     "x": 8,
     "y": 8,
-    "id": 114,
+    "id": 113,
     "class": "spike"
   },
   {
     "x": 6,
+    "y": 8,
+    "id": 114,
+    "class": "spike"
+  },
+  {
+    "x": 5,
     "y": 8,
     "id": 115,
     "class": "spike"
   },
   {
-    "x": 5,
+    "x": 4,
     "y": 8,
     "id": 116,
     "class": "spike"
   },
   {
-    "x": 4,
+    "x": 3,
     "y": 8,
     "id": 117,
     "class": "spike"
   },
   {
-    "x": 3,
+    "x": 2,
     "y": 8,
     "id": 118,
     "class": "spike"
   },
   {
-    "x": 2,
+    "x": 1,
     "y": 8,
     "id": 119,
     "class": "spike"
   },
   {
-    "x": 1,
+    "x": 0,
     "y": 8,
     "id": 120,
     "class": "spike"
   },
   {
-    "x": 0,
+    "x": -2,
     "y": 8,
     "id": 121,
     "class": "spike"
   },
   {
-    "x": -2,
+    "x": -1,
     "y": 8,
     "id": 122,
     "class": "spike"
   },
   {
-    "x": -1,
+    "x": -3,
     "y": 8,
     "id": 123,
     "class": "spike"
   },
   {
-    "x": -3,
+    "x": -4,
     "y": 8,
     "id": 124,
     "class": "spike"
   },
   {
-    "x": -4,
-    "y": 8,
-    "id": 125,
-    "class": "spike"
-  },
-  {
-    "x": 1,
-    "y": 1,
-    "id": 126,
-    "class": "coin"
-  },
-  {
     "x": -1,
     "y": -27,
-    "id": 127,
+    "id": 125,
     "class": "wall"
   },
   {
     "x": 6,
     "y": -25,
-    "id": 128,
+    "id": 126,
     "class": "wall"
   },
   {
     "x": 7,
     "y": -27,
-    "id": 129,
+    "id": 127,
     "class": "wall"
   },
   {
     "x": 4,
     "y": -26,
-    "id": 130,
+    "id": 128,
     "class": "wall"
   },
   {
     "x": 2,
     "y": -26,
-    "id": 131,
+    "id": 129,
     "class": "wall"
   },
   {
     "x": 6,
     "y": -26,
-    "id": 132,
+    "id": 130,
     "class": "spike"
   },
   {
     "x": 5,
+    "y": -26,
+    "id": 131,
+    "class": "spike"
+  },
+  {
+    "x": 0,
+    "y": -26,
+    "id": 132,
+    "class": "spike"
+  },
+  {
+    "x": 1,
     "y": -26,
     "id": 133,
     "class": "spike"
   },
   {
     "x": 0,
-    "y": -26,
+    "y": -25,
     "id": 134,
-    "class": "spike"
+    "class": "wall"
   },
   {
     "x": 1,
-    "y": -26,
+    "y": -25,
     "id": 135,
-    "class": "spike"
+    "class": "wall"
   },
   {
-    "x": 0,
+    "x": 5,
     "y": -25,
     "id": 136,
     "class": "wall"
   },
   {
-    "x": 1,
-    "y": -25,
-    "id": 137,
-    "class": "wall"
-  },
-  {
-    "x": 5,
-    "y": -25,
-    "id": 138,
-    "class": "wall"
-  },
-  {
     "x": 9,
     "y": -27,
-    "id": 139,
+    "id": 137,
     "class": "wall"
   },
   {
     "x": 9,
     "y": -28,
-    "id": 140,
+    "id": 138,
     "class": "spike"
   },
   {
     "x": 3,
     "y": -29,
-    "id": 141,
+    "id": 139,
     "class": "slime"
   },
   {
     "x": -3,
     "y": -27,
-    "id": 142,
+    "id": 140,
     "class": "wall"
   },
   {
     "x": -3,
     "y": -28,
-    "id": 143,
+    "id": 141,
     "class": "spike"
   },
   {
     "x": 3,
     "y": -50,
-    "id": 144,
+    "id": 142,
     "class": "wall"
   },
   {
     "x": 3,
+    "y": -51,
+    "id": 143,
+    "class": "wall"
+  },
+  {
+    "x": 3,
+    "y": -49,
+    "id": 144,
+    "class": "wall"
+  },
+  {
+    "x": 4,
     "y": -51,
     "id": 145,
     "class": "wall"
   },
   {
-    "x": 3,
-    "y": -49,
+    "x": 5,
+    "y": -51,
     "id": 146,
     "class": "wall"
   },
   {
-    "x": 4,
-    "y": -51,
-    "id": 147,
-    "class": "wall"
-  },
-  {
-    "x": 5,
-    "y": -51,
-    "id": 148,
-    "class": "wall"
-  },
-  {
     "x": 5,
     "y": -49,
-    "id": 149,
+    "id": 147,
     "class": "wall"
   },
   {
     "x": 6,
     "y": -49,
-    "id": 150,
+    "id": 148,
     "class": "wall"
   },
   {
     "x": 3,
     "y": -48,
-    "id": 151,
+    "id": 149,
     "class": "wall"
   },
   {
     "x": 3,
     "y": -47,
-    "id": 152,
+    "id": 150,
     "class": "wall"
   },
   {
     "x": 4,
     "y": -47,
-    "id": 153,
+    "id": 151,
     "class": "slime"
   },
   {
     "x": 5,
+    "y": -47,
+    "id": 152,
+    "class": "wall"
+  },
+  {
+    "x": 6,
+    "y": -47,
+    "id": 153,
+    "class": "wall"
+  },
+  {
+    "x": 7,
     "y": -47,
     "id": 154,
     "class": "wall"
   },
   {
-    "x": 6,
-    "y": -47,
-    "id": 155,
-    "class": "wall"
-  },
-  {
-    "x": 7,
-    "y": -47,
-    "id": 156,
-    "class": "wall"
-  },
-  {
     "x": 7,
     "y": -49,
-    "id": 157,
+    "id": 155,
     "class": "wall"
   },
   {
     "x": 10,
     "y": -49,
-    "id": 158,
+    "id": 156,
     "class": "wall"
   },
   {
     "x": 2,
     "y": -51,
-    "id": 159,
+    "id": 157,
     "class": "wall"
   },
   {
     "x": 1,
     "y": -51,
-    "id": 160,
+    "id": 158,
     "class": "wall"
   },
   {
     "x": 4,
     "y": -45,
-    "id": 161,
+    "id": 159,
     "class": "wall"
   },
   {
     "x": 5,
     "y": -45,
-    "id": 162,
+    "id": 160,
     "class": "wall"
   },
   {
     "x": 6,
     "y": -45,
-    "id": 163,
+    "id": 161,
     "class": "wall"
   },
   {
     "x": 7,
     "y": -45,
-    "id": 164,
+    "id": 162,
     "class": "wall"
   },
   {
     "x": 11,
     "y": -49,
-    "id": 165,
+    "id": 163,
     "class": "wall"
   },
   {
     "x": 9,
     "y": -49,
-    "id": 166,
+    "id": 164,
     "class": "spike"
   },
   {
     "x": 8,
     "y": -49,
-    "id": 167,
+    "id": 165,
     "class": "wall"
   },
   {
     "x": 13,
     "y": -49,
-    "id": 168,
+    "id": 166,
     "class": "slime"
   },
   {
     "x": 12,
     "y": -49,
-    "id": 169,
+    "id": 167,
     "class": "wall"
   },
   {
     "x": 51,
     "y": 63,
-    "id": 170,
+    "id": 168,
     "class": "wall"
   },
   {
     "x": 50,
     "y": 63,
-    "id": 171,
+    "id": 169,
     "class": "wall"
   },
   {
     "x": 49,
     "y": 63,
-    "id": 172,
+    "id": 170,
     "class": "wall"
   },
   {
-    "x": 56,
-    "y": -211,
-    "id": 173,
-    "class": "coin"
-  },
-  {
-    "x": 2,
-    "y": -50,
-    "id": 174,
+    "x": 59,
+    "y": 8,
+    "id": 171,
     "class": "coin"
   },
   {
     "x": 6,
     "y": -24,
+    "id": 172,
+    "class": "coin"
+  },
+  {
+    "x": 1,
+    "y": 1,
+    "id": 173,
+    "class": "coin"
+  },
+  {
+    "x": 0,
+    "y": 2,
+    "id": 174,
+    "class": "wall"
+  },
+  {
+    "x": 2,
+    "y": -50,
     "id": 175,
     "class": "coin"
   },
   {
-    "x": 59,
-    "y": 8,
+    "x": 56,
+    "y": -211,
     "id": 176,
     "class": "coin"
   }

@@ -48,19 +48,22 @@ class Player extends Figure {
 
   @Override void show() {
     cam.drawImage(play, int(x), int(y), int(w), int(h));
-    fill(255);
-    noStroke();
-    text(int(grounded), 10, 10);
-    text("vx: "+vx, 10, 22, 10);
-    text("vy: "+vy, 10, 34, 10);
-    text("x: "+x, 10, 22+24, 10);
-    text("y: "+y, 10, 34+24, 10);
-    text("mouseX: "+mouseX, 10, 22+24+24, 10);
-    text("mouseY: "+mouseY, 10, 34+24+24, 10);
-    text("BlockX: "+cam.getInWorldCoordBlock(mouseX, mouseY).x, 10, 22+24+24+24, 10);
-    text("BlockY: "+cam.getInWorldCoordBlock(mouseX, mouseY).y, 10, 34+24+24+24, 10);
-    text("editModeOn: "+editModeOn, 10, 22+24+24+24+24, 10);
-    text("gravity: "+gravity, 10, 34+24+24+24+24, 10);
+    if (editModeOn) {
+      fill(255);
+      noStroke();
+      text(int(grounded), 10, 10);
+      text("vx: "+vx, 10, 22, 10);
+      text("vy: "+vy, 10, 34, 10);
+      text("x: "+x, 10, 22+24, 10);
+      text("y: "+y, 10, 34+24, 10);
+      text("mouseX: "+mouseX, 10, 22+24+24, 10);
+      text("mouseY: "+mouseY, 10, 34+24+24, 10);
+      text("BlockX: "+cam.getInWorldCoordBlock(mouseX, mouseY).x, 10, 22+24+24+24, 10);
+      text("BlockY: "+cam.getInWorldCoordBlock(mouseX, mouseY).y, 10, 34+24+24+24, 10);
+      text("editModeOn: "+editModeOn, 10, 22+24+24+24+24, 10);
+      text("gravity: "+gravity, 10, 34+24+24+24+24, 10);
+      text("Coins collected: "+coinsCollected, 10, 34+24+24+24+24+12, 10);
+    }
   }
 
   @Override void update() {
@@ -73,7 +76,7 @@ class Player extends Figure {
 
   void hitbox() {
     grounded = false;
-    Figure del = new Figure();
+    int delID = -1;
     for (Figure f : worldFigures) {
       if (hitbox.overlap(f.hitbox)) {
 
@@ -81,14 +84,15 @@ class Player extends Figure {
         if (f.hitbox.fest == false) {
           if (f.getClass() == s.getClass()) {
             //if (sqrt(sq(move.x)+sq(move.y)) > w/8f) {
-              if (editModeOn == false) {
-                resetToCheckpoint();
-              }
+            if (editModeOn == false) {
+              resetToCheckpoint();
+            }
             //}
           }
           if (f.getClass() == co.getClass()&& editModeOn == false) {
             playSound(collectCoin, 0.7, true);
-            del = f;
+            delID = f.id;
+            coinsCollected++;
           }
         } else {
           if (move.x != 0) {
@@ -126,8 +130,8 @@ class Player extends Figure {
         }
       }
     }
-    if (del.id != -1 && editModeOn == false) { //removes a Coin when you are not in editMode
-      removeFigure(del.id);
+    if (delID!= -1 && editModeOn == false) { //removes a Coin when you are not in editMode
+      removeFigure(delID);
     }
   }
 }

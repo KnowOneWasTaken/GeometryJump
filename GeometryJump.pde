@@ -12,6 +12,7 @@ JSONArray world;
 String editMode = "wall";
 boolean editModeOn = false;
 boolean gravity = true;
+int coinsCollected = 0;
 
 Spike s; //Spike just to getClass()
 Slime sl; //Slime just to getClass()
@@ -157,6 +158,7 @@ void removeFigure(int id) {
     println("Error while removing a Figure: id: "+id+", worldFigures.size():"+worldFigures.size());
     println("Error catched:");
     println(e);
+    updateIDs();
   }
 }
 

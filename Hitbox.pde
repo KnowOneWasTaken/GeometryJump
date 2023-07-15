@@ -31,8 +31,8 @@ class Hitbox {
   void show() {
     fill(0, 0, 0, 0);
     stroke(0, 255, 0);
-    strokeWeight(10);
-    cam.drawRect(x1+5, y1+5, w-5, h-5);
+    strokeWeight(1);
+    cam.drawRect(x1, y1, w, h);
     strokeWeight(2);
   }
 

@@ -80,13 +80,14 @@ class Player extends Figure {
         PVector move = f.hitbox.findNearestExit(hitbox);
         if (f.hitbox.fest == false) {
           if (f.getClass() == s.getClass()) {
-            if (sqrt(sq(move.x)+sq(move.y)) > w/8f) {
+            //if (sqrt(sq(move.x)+sq(move.y)) > w/8f) {
               if (editModeOn == false) {
                 resetToCheckpoint();
               }
-            }
+            //}
           }
-          if (f.getClass() == co.getClass()) {
+          if (f.getClass() == co.getClass()&& editModeOn == false) {
+            playSound(collectCoin, 0.7, true);
             del = f;
           }
         } else {

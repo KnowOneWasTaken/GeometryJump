@@ -1,5 +1,5 @@
 import processing.sound.*;
-SoundFile click, background1, reset, jump, jumpSlime;
+SoundFile click, background1, reset, jump, jumpSlime, collectCoin;
 
 Figure ground;
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow;
@@ -275,6 +275,7 @@ void loadSounds() {
   background1 = new SoundFile(this, "background1.mp3");
   jump = new SoundFile(this, "jump.mp3");
   jumpSlime = new SoundFile(this, "jumpSlime.mp3");
+  collectCoin = new SoundFile(this,"collectCoin.mp3");
 }
 
 void playSound(SoundFile sound) {

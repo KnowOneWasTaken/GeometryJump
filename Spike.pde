@@ -9,6 +9,7 @@ class Spike extends Box {
     super(x, y, w, h, id);
     hitbox.updateCoord(x*blockSize+blockSize/8, y*blockSize+blockSize/8, w*blockSize-blockSize/4, h*blockSize-blockSize/4);
     this.rotation = rotation;
+    hitbox.solid = false;
   }
   Spike() {
     super(0, 0, 0, 0, -1);

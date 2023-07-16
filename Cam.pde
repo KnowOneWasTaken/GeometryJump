@@ -41,6 +41,13 @@ class Cam {
   PVector getInWorldCoord(PVector v) {
     return new PVector(v.x+x, v.y+y);
   }
+  
+  int getInWorldXbyBlock(int px) {
+   return int(getInWorldCoordBlock(int(getInImageCoord(px,0).x),0).x);
+  }
+  int getInWorldYbyBlock(int py) {
+   return int(getInWorldCoordBlock(0,int(getInImageCoord(py,0).x)).y);
+  }
 
 
 //Returns the coordinates of the block that is at the specified on-screen-coordinates

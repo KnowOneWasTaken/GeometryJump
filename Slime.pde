@@ -1,24 +1,20 @@
 class Slime extends Box {
+  PImage box = slime, glow = slimeGlow;
   Slime(int x, int y, int w, int h, int id) {
     super(x, y, w, h, id);
+    box = slime;
+    glow = slimeGlow;
   }
   Slime() {
     super(0, 0, 0, 0, -1);
+    box = slime;
+    glow = slimeGlow;
   }
 
   @Override void show() {
-    for (int i = 0; i < blockW; i++) {
-      for (int j = 0; j < blockH; j++) {
-        cam.drawImage(slime, x+i*blockSize, y+j*blockSize, blockSize, blockSize);
-      }
-    }
+    show(slime);
   }
-
   @Override void showGlow() {
-    for (int i = 0; i < blockW; i++) {
-      for (int j = 0; j < blockH; j++) {
-        cam.drawImage(slimeGlow, int(x+i*blockSize-0.5*blockSize), int(y+j*blockSize-0.5*blockSize), blockSize*2, blockSize*2);
-      }
-    }
+    showGlow(slimeGlow);
   }
 }

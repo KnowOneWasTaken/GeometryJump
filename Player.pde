@@ -2,6 +2,8 @@ class Player extends Figure {
   boolean grounded;
   float x, y, w, h;
   int blockX, blockY;
+  PVector checkpointBlock = new PVector(0, -1);
+
   Player(int x, int y, int w, int h) {
     super(x*blockSize, y*blockSize, w, h);
     this.x = x*blockSize;
@@ -9,6 +11,7 @@ class Player extends Figure {
     this.w = w;
     this.h = h;
     grounded = false;
+    checkpointBlock = new PVector(0, -1);
   }
 
   void gravity() {
@@ -21,12 +24,18 @@ class Player extends Figure {
   }
 
   void resetToCheckpoint() {
+    if (getFigureAt(int(checkpointBlock.x*blockSize+blockSize/2), int(checkpointBlock.y*blockSize+blockSize+blockSize/2)).getClass() == ch.getClass()) {
+      player.x = checkpointBlock.x*blockSize;
+      player.y = (checkpointBlock.y)*blockSize;
+      println("Player got reset to Checkpoint");
+    } else {
+      println("Checkpoint not found: Player got reset to default");
+      player.x = 0;
+      player.y = -blockSize;
+    }
     playSound(reset, 0.5, true);
-    player.x = 0;
-    player.y = -blockSize;
     vx = 0;
     vy = 0;
-    println("Player got reset to Checkpoint");
   }
 
   void jump() {
@@ -48,7 +57,7 @@ class Player extends Figure {
 
   @Override void show() {
     cam.drawImage(play, int(x), int(y), int(w), int(h));
-    
+
     //displays data on the top left corner
     if (editModeOn) {
       fill(255);
@@ -58,8 +67,8 @@ class Player extends Figure {
       text("vy: "+vy, 10, 34, 10);
       text("x: "+x, 10, 22+24, 10);
       text("y: "+y, 10, 34+24, 10);
-      text("mouseX: "+mouseX, 10, 22+24+24, 10);
-      text("mouseY: "+mouseY, 10, 34+24+24, 10);
+      text("mouseX: "+cam.getInWorldX(mouseX), 10, 22+24+24, 10);
+      text("mouseY: "+cam.getInWorldY(mouseY), 10, 34+24+24, 10);
       text("BlockX: "+cam.getInWorldCoordBlock(mouseX, mouseY).x, 10, 22+24+24+24, 10);
       text("BlockY: "+cam.getInWorldCoordBlock(mouseX, mouseY).y, 10, 34+24+24+24, 10);
       text("editModeOn: "+editModeOn, 10, 22+24+24+24+24, 10);
@@ -123,6 +132,15 @@ class Player extends Figure {
               vy = vy -50;
               playSound(jumpSlime, 0.5, true);
               println("Slime jump");
+            }
+          }
+          if (f.getClass() == ch.getClass()) {
+            if (grounded) {
+              if (int(checkpointBlock.x) != int(f.x/blockSize) || int(checkpointBlock.y) != int((f.y/blockSize)-1)) {
+                checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
+                println("Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
+                playSound(collectCoin, 0.5, true);
+              }
             }
           }
           if (grounded) {

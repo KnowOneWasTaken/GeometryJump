@@ -3,8 +3,10 @@ import processing.sound.*;
 SoundFile click, background1, reset, jump, jumpSlime, collectCoin;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
-Figure ground;
-PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow;
+PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff;
+
+Button Edit;
+
 ArrayList<Figure> worldFigures = new ArrayList<Figure>();
 Player player;
 Cam cam;
@@ -19,11 +21,18 @@ int coinsCollected = 0;
 Spike s; //Spike just to getClass()
 Slime sl; //Slime just to getClass()
 Coin co;
+Checkpoint ch;
+boolean inGame = false;
+int level = 0;
 
 //called once at launch
 void setup() {
   fullScreen(P3D);
   frameRate(50);
+
+  loadImages();
+  thread("loadSounds");
+
   //size(1920, 1080, P2D);
   world = new JSONArray();
 
@@ -41,11 +50,11 @@ void setup() {
   s = new Spike();
   sl = new Slime();
   co = new Coin();
+  ch = new Checkpoint();
   player = new Player(0, -1, 60, 60);
   cam = new Cam(0, 0, 540, 540);
 
-  loadImages();
-  thread("loadSounds");
+  Edit = new Button(true, BEditModeOff, BEditModeOn, false, width-180, 20, 160, 80);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
@@ -79,6 +88,8 @@ void draw() {
 
   //plays the background1 sound in a loop when it's loaded
   playSound(background1, 0.2);
+
+  Edit.show();
 }
 
 //This function is responsible for displaying the current edit mode on the screen. It uses different images based on the selected edit mode.
@@ -100,19 +111,25 @@ void showEditMode() {
       imgGlow = slimeGlow;
       break;
     case "remove":
-      img = remove;
+      img = null;
       imgGlow = remove;
       break;
     case "coin":
       img = coin;
       imgGlow = coinGlow;
       break;
+    case "checkpoint":
+      img = checkpoint;
+      imgGlow = checkpointGlow;
+      break;
     default:
       img = wall;
       imgGlow = wallGlow;
       break;
     }
-    image(img, blockSize/2, height - blockSize, blockSize/2, blockSize/2);
+    if (img != null) {
+      image(img, blockSize/2, height - blockSize, blockSize/2, blockSize/2);
+    }
     image(imgGlow, blockSize/4, height - blockSize-blockSize/4, blockSize, blockSize);
   }
 }
@@ -129,6 +146,8 @@ Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
     return new Slime(x, y, w, h, id);
   case "coin":
     return new Coin(x, y, w, h, id);
+  case "checkpoint":
+    return new Checkpoint(x, y, w, h, id);
   default:
     println("Error in Main createFigure(), createFigure(): ObjectClass coujld'nt be resolved");
     return new Figure(0, 0, 0, 0, -1);
@@ -167,6 +186,7 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   }
   world.setJSONObject(id, figure);
   saveJSONArray(world, "data/world.json");
+  println("Added Figure of class: "+ObjectClass);
 }
 
 
@@ -215,7 +235,7 @@ void reloadFigures() {
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
   println(getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
-  if (editModeOn) {
+  if (editModeOn && Edit.touch() == false) {
     if (editMode != "remove") {
       addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
       playSound(click, 0.5, true);
@@ -232,6 +252,10 @@ void mouseReleased() {
         println("MouseReleased: RemoveFigure: No Figure at this position found!");
       }
     }
+  }
+  if (Edit.touch()&&mouseButton==LEFT) {
+    editModeOn = !editModeOn;
+    Edit.pictureChange();
   }
 }
 
@@ -283,11 +307,15 @@ void keyReleased() {
   if (key == 'c') {
     editMode = "coin";
   }
+  if (key == 'v') {
+    editMode = "checkpoint";
+  }
   if (key == 'g') {
     gravity = !gravity;
   }
   if (key == 'e') {
     editModeOn = !editModeOn;
+    Edit.pictureChange();
   }
 }
 
@@ -304,6 +332,10 @@ void loadImages() {
   remove = loadImage("remove.png");
   coinGlow = loadImage("coinGlow.png");
   coin = loadImage("coin.png");
+  checkpointGlow = loadImage("checkpointGlow.png");
+  checkpoint = loadImage("checkpoint.png");
+  BEditModeOff = loadImage("BEditModeOff.png");
+  BEditModeOn = loadImage("BEditModeOn.png");
 }
 
 

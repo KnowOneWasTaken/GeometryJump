@@ -33,7 +33,7 @@ class Player extends Figure {
       player.x = 0;
       player.y = -blockSize;
     }
-    if (worldFigure.size() != 0) {
+    if (worldFigures.size() != 0) {
       playSound(reset, 0.5, true);
     }
     vx = 0;
@@ -138,12 +138,22 @@ class Player extends Figure {
               println("Slime jump");
             }
           }
-          if (f.getClass() == ch.getClass()) {
+          if (f.getClass() == ch.getClass() || f.getClass() == go.getClass()) {
             if (grounded) {
               if (int(checkpointBlock.x) != int(f.x/blockSize) || int(checkpointBlock.y) != int((f.y/blockSize)-1)) {
-                checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
-                println("Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
-                playSound(collectCoin, 0.5, true);
+                if (f.getClass() == go.getClass() && editModeOn == false) {
+                  playSound(goalSound);
+                  println("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins!");
+                  fill(255);
+                  textSize(50);
+                  text("You collected "+coinsCollected +" Coins!", width/2-textWidth("You collected ")/2,height/2);
+                  delay(3000);
+                  inGame = false;
+                } else {
+                  checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
+                  println("Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
+                  playSound(collectCoin, 0.5, true);
+                }
               }
             }
           }

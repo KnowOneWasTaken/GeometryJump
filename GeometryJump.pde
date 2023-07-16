@@ -1,54 +1,64 @@
 //This section imports the necessary sound libraries used in the program.
 import processing.sound.*;
-SoundFile click, background1, reset, jump, jumpSlime, collectCoin;
+SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
-PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX;
+PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow;
 
 Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX;
 
 ArrayList<Figure> worldFigures = new ArrayList<Figure>();
 Player player;
 Cam cam;
-int blockSize = 60;
-boolean[] keysPressed = new boolean[65536];
-JSONArray world;
-String editMode = "wall";
-boolean editModeOn = false;
-boolean gravity = true;
-int coinsCollected = 0;
+int blockSize = 60; //indicates how many pixels a block is large
+boolean[] keysPressed = new boolean[65536]; //used to check if a key is pressed or not
+JSONArray world; //The json-Array that contains the figures of the environment
+String editMode = "wall"; //default for the world-edit mode: selects box/walls as the default to add to your world in editModeOn
+boolean editModeOn = false; //idicates if the editMode is on or off
+boolean gravity = true; //indicates if gravity is in editModeOn active or not
+int coinsCollected = 0; //indicates how many coins the player has collected in a level
 
-Spike s; //Spike just to getClass()
-Slime sl; //Slime just to getClass()
+//objects just to get their .getClass()
+Spike s;
+Slime sl;
 Coin co;
 Checkpoint ch;
-boolean inGame = false;
-int level = 1;
-int levelAmount = 2;
+Goal go;
+
+boolean inGame = false; //indicates if the game is running (true) or if the player is in the menue (false)
+int level = 1; //selects level 1 as default
+int levelAmount = 3; //indicates how many levels there are which should not be altered by in Game editing
+int levelAmountButtons = 2; //indicates how many button-images/ buttons there are for the level-selection
 
 //called once at launch
 void setup() {
-  fullScreen(P3D);
+  //fullScreen(P3D);
+  size(480, 300);
+  
   frameRate(50);
 
   loadImages();
   thread("loadSounds");
 
-  //size(1920, 1080, P2D);
-
   s = new Spike();
   sl = new Slime();
   co = new Coin();
   ch = new Checkpoint();
+  go = new Goal();
+
   player = new Player(0, -1, 60, 60);
   cam = new Cam(0, 0, 540, 540);
 
-  Edit = new Button(true, BEditModeOff, BEditModeOn, false, width-180, 20, 160, 80);
-  Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
-  Level2 = new Button(true, BLevel2, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
-  LevelX = new Button(true, BLevelX, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
-  SkipRight = new Button(true, right, rightGlow, false, width/2+320+50, height/2-75, 100, 150, 1, false, true);
-  SkipLeft = new Button(true, left, leftGlow, false, width/2-320-50-100, height/2-75, 100, 150, 1, false, true);
+  Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-180*(width/1920f)), int(20*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
+  Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-int(320*(width/1920f)), height/2-int(220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
+  println("x: "+Level1.x);
+  println("y: "+Level1.y);
+  println("w: "+Level1.widthB);
+  println("h: "+Level1.heightB);
+  Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
+  LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
+  SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+  SkipLeft = new Button(true, left, leftGlow, false, int(width/2-(320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
@@ -108,6 +118,7 @@ void draw() {
 void startLevel(int lvl) {
   world = new JSONArray();
   worldFigures.clear();
+  coinsCollected = 0;
   println("world and worldFigures cleared");
   player.checkpointBlock = new PVector(0, -1);
   player.resetToCheckpoint();
@@ -169,6 +180,10 @@ void showEditMode() {
       img = checkpoint;
       imgGlow = checkpointGlow;
       break;
+    case "goal":
+      img = checkpoint;
+      imgGlow = goalGlow;
+      break;
     default:
       img = wall;
       imgGlow = wallGlow;
@@ -195,6 +210,8 @@ Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
     return new Coin(x, y, w, h, id);
   case "checkpoint":
     return new Checkpoint(x, y, w, h, id);
+  case "goal":
+    return new Goal(x, y, w, h, id);
   default:
     println("Error in Main createFigure(), createFigure(): ObjectClass coujld'nt be resolved");
     return new Figure(0, 0, 0, 0, -1);
@@ -216,26 +233,30 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   figure.setString("class", ObjectClass);
   figure.setInt("x", x);
   figure.setInt("y", y);
-  switch(editMode) {
-  case "wall":
-    worldFigures.add(new Box(x, y, w, h, id));
-    break;
-  case "spike":
-    worldFigures.add(new Spike(x, y, w, h, id, 1));
-    break;
-  case "slime":
-    worldFigures.add(new Slime(x, y, w, h, id));
-    break;
-  case "coin":
-    worldFigures.add(new Coin(x, y, w, h, id));
-    break;
-  case "checkpoint":
-    worldFigures.add(new Checkpoint(x, y, w, h, id));
-    break;
-  }
+  //switch(editMode) {
+  //case "wall":
+  //  worldFigures.add(new Box(x, y, w, h, id));
+  //  break;
+  //case "spike":
+  //  worldFigures.add(new Spike(x, y, w, h, id, 1));
+  //  break;
+  //case "slime":
+  //  worldFigures.add(new Slime(x, y, w, h, id));
+  //  break;
+  //case "coin":
+  //  worldFigures.add(new Coin(x, y, w, h, id));
+  //  break;
+  //case "checkpoint":
+  //  worldFigures.add(new Checkpoint(x, y, w, h, id));
+  //  break;
+  //case "goal":
+  //  worldFigures.add(new Goal(x, y, w, h, id));
+  //  break;
+  //}
+  worldFigures.add(createFigure(ObjectClass, x, y, w, h, id));
   world.setJSONObject(id, figure);
   saveJSONArray(world, "data/world.json");
-  if(level > levelAmount) {
+  if (level > levelAmount) {
     saveJSONArray(world, "data/level"+level+".json");
   }
   println("Added Figure of class: "+ObjectClass);
@@ -342,7 +363,7 @@ void mouseReleased() {
       println("Button pressed: Start Level 2");
       startLevel(level);
     }
-    if (LevelX.touch()&&mouseButton==LEFT && level > levelAmount) {
+    if (LevelX.touch()&&mouseButton==LEFT && level > levelAmountButtons) {
       inGame = true;
       println("Button pressed: Start Level "+level);
       startLevel(level);
@@ -409,6 +430,9 @@ void keyReleased() {
   if (key == 'v') {
     editMode = "checkpoint";
   }
+  if (key == 'h') {
+    editMode = "goal";
+  }
   if (key == 'g') {
     gravity = !gravity;
   }
@@ -449,6 +473,7 @@ void loadImages() {
   rightGlow = loadImage("rightGlow.png");
   left = loadImage("left.png");
   leftGlow = loadImage("leftGlow.png");
+  goalGlow = loadImage("goalGlow.png");
 }
 
 
@@ -460,6 +485,7 @@ void loadSounds() {
   jump = new SoundFile(this, "jump.mp3");
   jumpSlime = new SoundFile(this, "jumpSlime.mp3");
   collectCoin = new SoundFile(this, "collectCoin.mp3");
+  goalSound = new SoundFile(this, "goal.mp3");
 }
 
 void playSound(SoundFile sound) {

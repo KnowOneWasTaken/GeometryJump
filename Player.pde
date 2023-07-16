@@ -31,7 +31,7 @@ class Player extends Figure {
 
   void jump() {
     if (grounded) {
-      if (getFigureAt(int(x+w/15f), int(y-blockSize/2)).hitbox.fest == false && getFigureAt(int(x+w-w/15f), int(y-blockSize/2)).hitbox.fest == false) {
+      if (getFigureAt(int(x+w/15f), int(y-blockSize/2)).hitbox.solid == false && getFigureAt(int(x+w-w/15f), int(y-blockSize/2)).hitbox.solid == false) {
         vy = vy - 18;
         playSound(jump, 0.5, true);
         println("jump");
@@ -48,6 +48,8 @@ class Player extends Figure {
 
   @Override void show() {
     cam.drawImage(play, int(x), int(y), int(w), int(h));
+    
+    //displays data on the top left corner
     if (editModeOn) {
       fill(255);
       noStroke();
@@ -67,11 +69,14 @@ class Player extends Figure {
   }
 
   @Override void update() {
+    gravity();
     move(vx/2, vy/2);
     hitbox();
     move(vx/2, vy/2);
     blockX = int(cam.getInWorldCoordBlock(int(x), int(y)).x);
     blockX = int(cam.getInWorldCoordBlock(int(x), int(y)).y);
+    hitbox();
+    show();
   }
 
   void hitbox() {
@@ -81,7 +86,7 @@ class Player extends Figure {
       if (hitbox.overlap(f.hitbox)) {
 
         PVector move = f.hitbox.findNearestExit(hitbox);
-        if (f.hitbox.fest == false) {
+        if (f.hitbox.solid == false) {
           if (f.getClass() == s.getClass()) {
             //if (sqrt(sq(move.x)+sq(move.y)) > w/8f) {
             if (editModeOn == false) {

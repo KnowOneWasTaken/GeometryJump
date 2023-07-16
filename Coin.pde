@@ -2,7 +2,7 @@ class Coin extends Box {
   float animationState = 0, animationY = 0;
   Coin(int x, int y, int w, int h, int id) {
     super(x, y, w, h, id);
-    hitbox.fest = false;
+    hitbox.solid = false;
   }
   Coin() {
     super(0, 0, 0, 0, -1);

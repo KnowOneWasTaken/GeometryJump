@@ -42,13 +42,15 @@ class Cam {
     return new PVector(v.x+x, v.y+y);
   }
 
+
+//Returns the coordinates of the block that is at the specified on-screen-coordinates
   PVector getInWorldCoordBlock(int px, int py) {
     float rx = ((px+x)*1f/blockSize);
     float ry = ((py+y)*1f/blockSize);
     if (rx<0) {
-      rx = -ceil(-rx);
+      rx = -ceil(-rx); //rounds up
     } else {
-      rx = int(rx);
+      rx = int(rx); //rounds down
     }
     if (ry<0) {
       ry = -ceil(-ry);
@@ -58,6 +60,8 @@ class Cam {
     return new PVector(rx, ry);
   }
   
+  
+  //Returns the rotated image (to the left): currently not called / used
   PImage rotateImage(PImage img) {
     PImage img2 = img;
     img = new PImage(img.height, img.width);

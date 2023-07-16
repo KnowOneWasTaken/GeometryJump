@@ -24,6 +24,8 @@ class Figure {
     vy = 0;
     hitbox = new Hitbox(x, y, w, h);
   }
+
+  //creates empty Figure with id = -1 and unsolid hitbox
   Figure() {
     x = 0;
     y = 0;
@@ -31,7 +33,7 @@ class Figure {
     h = -1;
     id = -1;
     hitbox = new Hitbox(x, y, w, h);
-    hitbox.fest = false;
+    hitbox.solid = false;
   }
 
   void show() {
@@ -39,7 +41,10 @@ class Figure {
     stroke(255, 0, 0);
     strokeWeight(2);
     cam.drawRect(x, y, w, h);
-    //hitbox.show();
+
+    if (editModeOn) {
+      hitbox.show();
+    }
   }
 
 

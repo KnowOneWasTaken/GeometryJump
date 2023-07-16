@@ -1,6 +1,6 @@
 class Hitbox {
   int x1, y1, x2, y2, x3, y3, x4, y4, w, h;
-  boolean fest = true;
+  boolean solid = true;
 
   Hitbox(int x, int y, int w, int h) {
     this.x1 = x; //top left corner
@@ -36,6 +36,7 @@ class Hitbox {
     strokeWeight(2);
   }
 
+//returns true, if the specified hitbox is within the hitbox of itself
   boolean overlap(Hitbox h) {
     if (h.x2 > x1 && h.x1 < x2) {
       if (h.y3 > y1 && h.y1 < y3) {
@@ -44,6 +45,8 @@ class Hitbox {
     }
     return false;
   }
+
+
 
   PVector findNearestExit(Hitbox h) {
     if (overlap(h)) {

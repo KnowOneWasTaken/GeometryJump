@@ -2,7 +2,7 @@ class Spike extends Box {
   int rotation = 0;
   Spike(int x, int y, int w, int h, int id) {
     super(x, y, w, h, id);
-    hitbox.fest = false;
+    hitbox.solid = false;
     hitbox.updateCoord(x*blockSize+blockSize/8, y*blockSize+blockSize/8, w*blockSize-blockSize/4, h*blockSize-blockSize/4);
   }
   Spike(int x, int y, int w, int h, int id, int rotation) {
@@ -12,7 +12,7 @@ class Spike extends Box {
   }
   Spike() {
     super(0, 0, 0, 0, -1);
-    hitbox.fest = false;
+    hitbox.solid = false;
   }
 
   @Override void show() {
@@ -34,6 +34,9 @@ class Spike extends Box {
     //  spikeRotation = cam.rotateImage(spikeRotation);
     //  break;
     //}
+    if (editModeOn) {
+      hitbox.show();
+    }
     for (int i = 0; i < blockW; i++) {
       for (int j = 0; j < blockH; j++) {
         cam.drawImage(spike, x+i*blockSize, y+j*blockSize, blockSize, blockSize);

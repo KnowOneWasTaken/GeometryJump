@@ -1,6 +1,8 @@
+//This section imports the necessary sound libraries used in the program.
 import processing.sound.*;
 SoundFile click, background1, reset, jump, jumpSlime, collectCoin;
 
+//These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
 Figure ground;
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow;
 ArrayList<Figure> worldFigures = new ArrayList<Figure>();
@@ -18,21 +20,24 @@ Spike s; //Spike just to getClass()
 Slime sl; //Slime just to getClass()
 Coin co;
 
+//called once at launch
 void setup() {
   fullScreen(P3D);
   frameRate(50);
   //size(1920, 1080, P2D);
   world = new JSONArray();
-  try {
+
+  try { // trys to load the world.json file
     reloadFigures();
     updateIDs();
     println(worldFigures);
   }
-  catch(Exception e) {
+  catch(Exception e) { //if the file could'nt be loaded: adds one block beneath the player
     println("No world map found");
     world = new JSONArray();
     addFigure("wall", 0, 0, 1, 1);
   }
+
   s = new Spike();
   sl = new Slime();
   co = new Coin();
@@ -43,33 +48,41 @@ void setup() {
   thread("loadSounds");
 }
 
+//called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
 void draw() {
 
   background(0);
   stroke(40);
   //int quadrat = blockSize*2;
-  cam.update();
   //for (int i = 0; i <= width+ quadrat; i = i+quadrat) {
   //  cam.drawLine(int(cam.x/quadrat)*quadrat+i, cam.y, int(cam.x/quadrat)*quadrat+i, cam.y + height);
   //}
   //for (int i = 0; i <= height +quadrat; i = i+quadrat) {
   //  cam.drawLine(cam.x, int(cam.y/quadrat)*quadrat+i, cam.x + width, int(cam.y/quadrat)*quadrat+i);
   //}
+  cam.update();
   keyListener();
+
+  //Calls show() and showGlow() for every Figure of the worldFigures
   for (Figure f : worldFigures) {
     f.show();
   }
   for (Figure f : worldFigures) {
     f.showGlow();
   }
-  player.gravity();
+
+  //updates the player: adds Gravity to speed, moves the player while checking the hitboxes and displaying it when position is calculated
   player.update();
-  player.hitbox();
-  player.show();
+
+  //displays the block, which is currently selected for edit,if you are in editModeOn
   showEditMode();
+
+  //plays the background1 sound in a loop when it's loaded
   playSound(background1, 0.2);
 }
 
+//This function is responsible for displaying the current edit mode on the screen. It uses different images based on the selected edit mode.
+//It is called in draw()
 void showEditMode() {
   if (editModeOn) {
     PImage img, imgGlow;
@@ -104,6 +117,8 @@ void showEditMode() {
   }
 }
 
+//This function creates a new instance of a Figure object based on the given parameters. The object's class is determined by the ObjectClass parameter.
+//If an error occured, a Figure with id = -1 gets returned
 Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
   switch(ObjectClass) {
   case "wall":
@@ -120,6 +135,9 @@ Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
   }
 }
 
+
+/* This function adds a new figure to the world. It creates a JSON object representing the figure and adds it to the world JSONArray.
+ The figure is also added to the worldFigures ArrayList. */
 void addFigure(String ObjectClass, int x, int y, int w, int h) {
   JSONObject figure = new JSONObject();
   int id;
@@ -142,11 +160,17 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   case "slime":
     worldFigures.add(new Slime(x, y, w, h, id));
     break;
+  case "coin":
+    worldFigures.add(new Coin(x, y, w, h, id));
+  case "checkpoint":
+    worldFigures.add(new Checkpoint(x, y, w, h, id));
   }
   world.setJSONObject(id, figure);
   saveJSONArray(world, "data/world.json");
 }
 
+
+//This function removes a figure from the world based on its ID. It removes the corresponding JSON object from the world JSONArray and removes the figure from the worldFigures ArrayList.
 void removeFigure(int id) {
   try {
     world.remove(id);
@@ -162,6 +186,8 @@ void removeFigure(int id) {
   }
 }
 
+
+//This function updates the IDs of the figures in the world JSONArray. It is called after a figure is removed to ensure the IDs remain sequential.
 void updateIDs() {
   JSONArray temp = loadJSONArray("world.json");
 
@@ -170,10 +196,12 @@ void updateIDs() {
     jsn.setInt("id", i);
   }
   world = temp;
-  reloadFigures();
   saveJSONArray(temp, "data/world.json");
+  reloadFigures();
 }
 
+
+//This function reloads the figures from the world.json file into the worldFigures ArrayList. It is called at the start of the program and after updating the IDs.
 void reloadFigures() {
   world = loadJSONArray("world.json");
   worldFigures.clear();
@@ -184,12 +212,14 @@ void reloadFigures() {
 }
 
 
+//This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
   println(getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
   if (editModeOn) {
     if (editMode != "remove") {
       addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
-      updateIDs();
+      playSound(click, 0.5, true);
+      //updateIDs();
     } else {
       Figure f = getFigureAt(cam.getInWorldCoord(mouseX, mouseY));
       if (f.id != -1) {
@@ -205,6 +235,8 @@ void mouseReleased() {
   }
 }
 
+
+//This function returns the figure at the given coordinates (x, y) in the world. It searches through the worldFigures ArrayList and checks if the player figure is present at the given coordinates as well.
 Figure getFigureAt(int x, int y) {
   for (Figure f : worldFigures) {
     if (f.hitbox.pointInHitbox(x, y)) {
@@ -212,7 +244,7 @@ Figure getFigureAt(int x, int y) {
       return f;
     }
   }
-  if (player.hitbox.pointInHitbox(cam.getInWorldCoord(x, y))) {
+  if (player.hitbox.pointInHitbox(x, y)) { //Edit: if (player.hitbox.pointInHitbox(cam.getInWorldCoord(x, y))) {
     println("Found Player Figure at: "+x+", "+y+"; id: "+player.id);
     return player;
   }
@@ -220,6 +252,7 @@ Figure getFigureAt(int x, int y) {
   return new Figure();
 }
 
+//This function returns the Figure at a given Position (in PVector)
 Figure getFigureAt(PVector v) {
   return getFigureAt(int(v.x), int(v.y));
 }
@@ -258,6 +291,8 @@ void keyReleased() {
   }
 }
 
+
+//This function loads the necessary images used in the program.
 void loadImages() {
   spike = loadImage("spike.png");
   wall = loadImage("wall.png");
@@ -271,13 +306,15 @@ void loadImages() {
   coin = loadImage("coin.png");
 }
 
+
+//This function loads the necessary sound files used in the program.
 void loadSounds() {
   click = new SoundFile(this, "click interface.mp3");
   reset = new SoundFile(this, "reset.mp3");
   background1 = new SoundFile(this, "background1.mp3");
   jump = new SoundFile(this, "jump.mp3");
   jumpSlime = new SoundFile(this, "jumpSlime.mp3");
-  collectCoin = new SoundFile(this,"collectCoin.mp3");
+  collectCoin = new SoundFile(this, "collectCoin.mp3");
 }
 
 void playSound(SoundFile sound) {
@@ -288,6 +325,8 @@ void playSound(SoundFile sound, float amp) {
   playSound(sound, amp, false);
 }
 
+
+//This plays a SoundFile with specified volume ('amp'). If 'multiple' is true, it plays the sound again, even when this sound is already playing (multiple times at the same time)
 void playSound(SoundFile sound, float amp, boolean multiple) {
   if (sound != null) {
     if (sound.isPlaying() == false || multiple) {
@@ -297,11 +336,14 @@ void playSound(SoundFile sound, float amp, boolean multiple) {
   }
 }
 
+
+//This function handles the key inputs for movement and other actions in the game.
 void keyListener() {
   int speed = 2;
   int maxSpeed = 12;
 
   if (editModeOn) {
+    // Check if 'w' key is pressed
     if (keysPressed['w']) {
       if (player.vy >-maxSpeed) {
         player.vy -= speed;
@@ -325,14 +367,14 @@ void keyListener() {
 
 
 
-  //  // Check if 'd' key is pressed
+  // Check if 'd' key is pressed
   if (keysPressed['d']) {
     if (player.vx < maxSpeed) {
       player.vx += speed;
     }
   }
 
-  //  // Check if spacebar (' ') is pressed
+  // Check if spacebar (' ') is pressed
   if (keysPressed[' ']) {
     player.jump();
   }

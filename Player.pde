@@ -30,6 +30,7 @@ class Player extends Figure {
       println("Player got reset to Checkpoint");
     } else {
       println("Checkpoint not found: Player got reset to default");
+      framesSinceStarted = 0;
       player.x = 0;
       player.y = -blockSize;
     }
@@ -146,7 +147,39 @@ class Player extends Figure {
                   println("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins!");
                   fill(255);
                   textSize(50);
-                  text("You collected "+coinsCollected +" Coins!", width/2-textWidth("You collected ")/2,height/2);
+                  text("You collected "+coinsCollected +" Coins!", width/2-textWidth("You collected ")/2, height/2);
+                  JSONObject levelTimes;
+                  try {
+                    times = loadJSONArray("times.json");
+                    try {
+                      levelTimes = times.getJSONObject(level);
+                      println("times.json loaded");
+                    }
+                    catch(Exception e2) {
+                      levelTimes = new JSONObject();
+                      levelTimes.setInt("frames", 2147483647);
+                      println("Exception 2: "+e2);
+                    }
+                    levelTimes.setInt("level", level);
+                    int frames = levelTimes.getInt("frames");
+                    println("frames Count in times.json found");
+                    if (framesSinceStarted < frames) {
+                      levelTimes.setInt("frames", framesSinceStarted);
+                      times.setJSONObject(level, levelTimes);
+                      saveJSONArray(times, "data/times.json");
+                      println("JSONArray saved");
+                    }
+                  }
+                  catch(Exception e) {
+                    println(e);
+                    JSONArray times = new JSONArray();
+                    levelTimes = new JSONObject();
+                    levelTimes.setInt("frames", framesSinceStarted);
+                    levelTimes.setInt("level", level);
+                    times.setJSONObject(level, levelTimes );
+                    saveJSONArray(times, "data/times.json");
+                                        println("New times.json made");
+                  }
                   delay(3000);
                   inGame = false;
                 } else {

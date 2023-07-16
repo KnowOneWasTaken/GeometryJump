@@ -1,6 +1,6 @@
 //This section imports the necessary sound libraries used in the program.
 import processing.sound.*;
-SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound;
+SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, tabChange;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow;
@@ -13,6 +13,7 @@ Cam cam;
 int blockSize = 60; //indicates how many pixels a block is large
 boolean[] keysPressed = new boolean[65536]; //used to check if a key is pressed or not
 JSONArray world; //The json-Array that contains the figures of the environment
+JSONArray times; //contains the times (frame-Counts) in which the player has completed the levels (best scores)
 String editMode = "wall"; //default for the world-edit mode: selects box/walls as the default to add to your world in editModeOn
 boolean editModeOn = false; //idicates if the editMode is on or off
 boolean gravity = true; //indicates if gravity is in editModeOn active or not
@@ -28,13 +29,14 @@ Goal go;
 boolean inGame = false; //indicates if the game is running (true) or if the player is in the menue (false)
 int level = 1; //selects level 1 as default
 int levelAmount = 3; //indicates how many levels there are which should not be altered by in Game editing
-int levelAmountButtons = 2; //indicates how many button-images/ buttons there are for the level-selection
+int levelAmountButtons = 0; //indicates how many button-images/ buttons there are for the level-selection
+int framesSinceStarted = 0;
 
 //called once at launch
 void setup() {
-  //fullScreen(P3D);
-  size(480, 300);
-  
+  fullScreen(P3D);
+  //size(480, 300);
+
   frameRate(50);
 
   loadImages();
@@ -58,13 +60,14 @@ void setup() {
   Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
-  SkipLeft = new Button(true, left, leftGlow, false, int(width/2-(320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+  SkipLeft = new Button(true, left, leftGlow, false, int(width/2+(-320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
 void draw() {
 
   if (inGame) {
+    framesSinceStarted++;
     background(0);
     stroke(40);
     //int quadrat = blockSize*2;
@@ -107,8 +110,8 @@ void draw() {
     default:
       LevelX.show();
       fill(255);
-      textSize(170);
-      text(level, 1180, 590);
+      textSize(170*(width/1920f));
+      text(level, 1180*(width/1920f), 590*(height/1080f));
     }
     SkipRight.show();
     SkipLeft.show();
@@ -349,6 +352,7 @@ void mouseReleased() {
     if (Edit.touch()&&mouseButton==LEFT) {
       editModeOn = !editModeOn;
       Edit.pictureChange();
+      playSound(click, 0.7, true);
     }
   } else {
     if (Level1.touch()&&mouseButton==LEFT && level == 1) {
@@ -356,25 +360,30 @@ void mouseReleased() {
       inGame = true;
       startLevel(level);
       println("Button pressed: Start Level 1");
+      playSound(tabChange, 0.7, true);
     }
     if (Level2.touch()&&mouseButton==LEFT && level == 2) {
       level = 2;
       inGame = true;
       println("Button pressed: Start Level 2");
       startLevel(level);
+      playSound(tabChange, 0.7, true);
     }
     if (LevelX.touch()&&mouseButton==LEFT && level > levelAmountButtons) {
       inGame = true;
       println("Button pressed: Start Level "+level);
       startLevel(level);
+      playSound(tabChange, 0.7, true);
     }
     if (SkipRight.touch()&&mouseButton==LEFT) {
       level++;
+      playSound(click, 0.7, true);
     }
     if (SkipLeft.touch()&&mouseButton==LEFT) {
       if (level > 1) {
         level--;
       }
+      playSound(click, 0.7, true);
     }
   }
 }
@@ -486,6 +495,7 @@ void loadSounds() {
   jumpSlime = new SoundFile(this, "jumpSlime.mp3");
   collectCoin = new SoundFile(this, "collectCoin.mp3");
   goalSound = new SoundFile(this, "goal.mp3");
+  tabChange = new SoundFile(this, "tabChange.mp3");
 }
 
 void playSound(SoundFile sound) {

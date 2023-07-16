@@ -106,6 +106,7 @@ class Player extends Figure {
           if (f.getClass() == co.getClass()&& editModeOn == false) {
             playSound(collectCoin, 0.7, true);
             delID = f.id;
+            println("Coin collected");
             coinsCollected++;
           }
         } else {

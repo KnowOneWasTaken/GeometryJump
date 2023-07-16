@@ -181,8 +181,10 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
     break;
   case "coin":
     worldFigures.add(new Coin(x, y, w, h, id));
+    break;
   case "checkpoint":
     worldFigures.add(new Checkpoint(x, y, w, h, id));
+    break;
   }
   world.setJSONObject(id, figure);
   saveJSONArray(world, "data/world.json");

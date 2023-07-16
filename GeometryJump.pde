@@ -3,9 +3,9 @@ import processing.sound.*;
 SoundFile click, background1, reset, jump, jumpSlime, collectCoin;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
-PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff;
+PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX;
 
-Button Edit;
+Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX;
 
 ArrayList<Figure> worldFigures = new ArrayList<Figure>();
 Player player;
@@ -23,7 +23,8 @@ Slime sl; //Slime just to getClass()
 Coin co;
 Checkpoint ch;
 boolean inGame = false;
-int level = 0;
+int level = 1;
+int levelAmount = 2;
 
 //called once at launch
 void setup() {
@@ -34,18 +35,6 @@ void setup() {
   thread("loadSounds");
 
   //size(1920, 1080, P2D);
-  world = new JSONArray();
-
-  try { // trys to load the world.json file
-    reloadFigures();
-    updateIDs();
-    println(worldFigures);
-  }
-  catch(Exception e) { //if the file could'nt be loaded: adds one block beneath the player
-    println("No world map found");
-    world = new JSONArray();
-    addFigure("wall", 0, 0, 1, 1);
-  }
 
   s = new Spike();
   sl = new Slime();
@@ -55,41 +44,99 @@ void setup() {
   cam = new Cam(0, 0, 540, 540);
 
   Edit = new Button(true, BEditModeOff, BEditModeOn, false, width-180, 20, 160, 80);
+  Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
+  Level2 = new Button(true, BLevel2, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
+  LevelX = new Button(true, BLevelX, BLevel1Glow, false, width/2-320, height/2-220, 640, 440, 1, false, true);
+  SkipRight = new Button(true, right, rightGlow, false, width/2+320+50, height/2-75, 100, 150, 1, false, true);
+  SkipLeft = new Button(true, left, leftGlow, false, width/2-320-50-100, height/2-75, 100, 150, 1, false, true);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
 void draw() {
 
-  background(0);
-  stroke(40);
-  //int quadrat = blockSize*2;
-  //for (int i = 0; i <= width+ quadrat; i = i+quadrat) {
-  //  cam.drawLine(int(cam.x/quadrat)*quadrat+i, cam.y, int(cam.x/quadrat)*quadrat+i, cam.y + height);
-  //}
-  //for (int i = 0; i <= height +quadrat; i = i+quadrat) {
-  //  cam.drawLine(cam.x, int(cam.y/quadrat)*quadrat+i, cam.x + width, int(cam.y/quadrat)*quadrat+i);
-  //}
-  cam.update();
-  keyListener();
+  if (inGame) {
+    background(0);
+    stroke(40);
+    //int quadrat = blockSize*2;
+    //for (int i = 0; i <= width+ quadrat; i = i+quadrat) {
+    //  cam.drawLine(int(cam.x/quadrat)*quadrat+i, cam.y, int(cam.x/quadrat)*quadrat+i, cam.y + height);
+    //}
+    //for (int i = 0; i <= height +quadrat; i = i+quadrat) {
+    //  cam.drawLine(cam.x, int(cam.y/quadrat)*quadrat+i, cam.x + width, int(cam.y/quadrat)*quadrat+i);
+    //}
+    cam.update();
+    keyListener();
 
-  //Calls show() and showGlow() for every Figure of the worldFigures
-  for (Figure f : worldFigures) {
-    f.show();
+    //Calls show() and showGlow() for every Figure of the worldFigures
+    for (Figure f : worldFigures) {
+      f.showGlow();
+    }
+    for (Figure f : worldFigures) {
+      f.show();
+    }
+
+    //updates the player: adds Gravity to speed, moves the player while checking the hitboxes and displaying it when position is calculated
+    player.update();
+
+    //displays the block, which is currently selected for edit,if you are in editModeOn
+    showEditMode();
+
+    //plays the background1 sound in a loop when it's loaded
+    playSound(background1, 0.2);
+    Edit.show();
+  } else {
+    background(0);
+    playSound(background1, 0.2);
+    switch(level) {
+    case 1:
+      Level1.show();
+      break;
+    case 2:
+      Level2.show();
+      break;
+    default:
+      LevelX.show();
+      fill(255);
+      textSize(170);
+      text(level, 1180, 590);
+    }
+    SkipRight.show();
+    SkipLeft.show();
   }
-  for (Figure f : worldFigures) {
-    f.showGlow();
+}
+
+void startLevel(int lvl) {
+  world = new JSONArray();
+  worldFigures.clear();
+  println("world and worldFigures cleared");
+  player.checkpointBlock = new PVector(0, -1);
+  player.resetToCheckpoint();
+  try { // trys to load the world.json file
+    String fileName = "";
+    switch (lvl) {
+    case 0:
+      fileName = "world";
+      break;
+    case 1:
+      fileName = "level1";
+      break;
+    case 2:
+      fileName = "level2";
+      break;
+    default:
+      fileName = "level"+level;
+      break;
+    }
+    println("Try to load "+fileName);
+    reloadFigures(fileName);
+    updateIDs();
   }
-
-  //updates the player: adds Gravity to speed, moves the player while checking the hitboxes and displaying it when position is calculated
-  player.update();
-
-  //displays the block, which is currently selected for edit,if you are in editModeOn
-  showEditMode();
-
-  //plays the background1 sound in a loop when it's loaded
-  playSound(background1, 0.2);
-
-  Edit.show();
+  catch(Exception e) { //if the file could'nt be loaded: adds one block beneath the player
+    println("No world map found");
+    world = new JSONArray();
+    addFigure("wall", 0, 0, 1, 1);
+    saveJSONArray(world, "data/level"+lvl+".json");
+  }
 }
 
 //This function is responsible for displaying the current edit mode on the screen. It uses different images based on the selected edit mode.
@@ -188,7 +235,11 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   }
   world.setJSONObject(id, figure);
   saveJSONArray(world, "data/world.json");
+  if(level > levelAmount) {
+    saveJSONArray(world, "data/level"+level+".json");
+  }
   println("Added Figure of class: "+ObjectClass);
+  println("New Figure saved in worldFigures, world and world.json: id: "+id);
 }
 
 
@@ -219,45 +270,91 @@ void updateIDs() {
   }
   world = temp;
   saveJSONArray(temp, "data/world.json");
-  reloadFigures();
+  println("updated ids into world and world.json");
+  reloadFigures("world");
 }
 
 
 //This function reloads the figures from the world.json file into the worldFigures ArrayList. It is called at the start of the program and after updating the IDs.
-void reloadFigures() {
-  world = loadJSONArray("world.json");
+void reloadFigures(String fileName) {
+  try {
+    world = new JSONArray();
+    world = loadJSONArray(fileName+".json");
+    println("world cleared and then loaded "+fileName+" into world");
+  }
+  catch(Exception e) {
+    println("World-File not found: "+fileName);
+    println("Exception: "+e);
+    world = new JSONArray();
+    worldFigures.clear();
+    addFigure("wall", 0, 0, 1, 1);
+  }
+  saveJSONArray(world, "data/world.json");
+  println("world saved as world.json");
   worldFigures.clear();
+  println("worldFigures cleard");
   for (int i = 0; i < world.size(); i++) {
     JSONObject jsn = world.getJSONObject(i);
     worldFigures.add(createFigure(jsn.getString("class"), jsn.getInt("x"), jsn.getInt("y"), 1, 1, jsn.getInt("id")));
   }
+  println("worldFigure from world added");
+  //println("Reloaded Figures of level: "+fileName);
+  //println(level);
 }
 
 
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
-  println(getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
-  if (editModeOn && Edit.touch() == false) {
-    if (editMode != "remove") {
-      addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
-      playSound(click, 0.5, true);
-      //updateIDs();
-    } else {
-      Figure f = getFigureAt(cam.getInWorldCoord(mouseX, mouseY));
-      if (f.id != -1) {
-        println("Trying to remove Figure, id: "+f.id);
-        removeFigure(f.id);
-        updateIDs();
-        println("Figure removed");
+  if (inGame) {
+    println(getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
+    if (editModeOn && Edit.touch() == false) {
+      if (editMode != "remove") {
+        addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
         playSound(click, 0.5, true);
+        //updateIDs();
       } else {
-        println("MouseReleased: RemoveFigure: No Figure at this position found!");
+        Figure f = getFigureAt(cam.getInWorldCoord(mouseX, mouseY));
+        if (f.id != -1) {
+          println("Trying to remove Figure, id: "+f.id);
+          removeFigure(f.id);
+          updateIDs();
+          println("Figure removed");
+          playSound(click, 0.5, true);
+        } else {
+          println("MouseReleased: RemoveFigure: No Figure at this position found!");
+        }
       }
     }
-  }
-  if (Edit.touch()&&mouseButton==LEFT) {
-    editModeOn = !editModeOn;
-    Edit.pictureChange();
+    if (Edit.touch()&&mouseButton==LEFT) {
+      editModeOn = !editModeOn;
+      Edit.pictureChange();
+    }
+  } else {
+    if (Level1.touch()&&mouseButton==LEFT && level == 1) {
+      level = 1;
+      inGame = true;
+      startLevel(level);
+      println("Button pressed: Start Level 1");
+    }
+    if (Level2.touch()&&mouseButton==LEFT && level == 2) {
+      level = 2;
+      inGame = true;
+      println("Button pressed: Start Level 2");
+      startLevel(level);
+    }
+    if (LevelX.touch()&&mouseButton==LEFT && level > levelAmount) {
+      inGame = true;
+      println("Button pressed: Start Level "+level);
+      startLevel(level);
+    }
+    if (SkipRight.touch()&&mouseButton==LEFT) {
+      level++;
+    }
+    if (SkipLeft.touch()&&mouseButton==LEFT) {
+      if (level > 1) {
+        level--;
+      }
+    }
   }
 }
 
@@ -266,15 +363,15 @@ void mouseReleased() {
 Figure getFigureAt(int x, int y) {
   for (Figure f : worldFigures) {
     if (f.hitbox.pointInHitbox(x, y)) {
-      println("Found Figure of class: "+f.getClass() + ", at: "+x+", "+y+"; id: "+f.id);
+      //println("Found Figure of class: "+f.getClass() + ", at: "+x+", "+y+"; id: "+f.id);
       return f;
     }
   }
   if (player.hitbox.pointInHitbox(x, y)) { //Edit: if (player.hitbox.pointInHitbox(cam.getInWorldCoord(x, y))) {
-    println("Found Player Figure at: "+x+", "+y+"; id: "+player.id);
+    //println("Found Player Figure at: "+x+", "+y+"; id: "+player.id);
     return player;
   }
-  println("No element of Environment on this position found: "+x+", "+y+"; id: "+"-1");
+  //println("No element of Environment on this position found: "+x+", "+y+"; id: "+"-1");
   return new Figure();
 }
 
@@ -319,6 +416,12 @@ void keyReleased() {
     editModeOn = !editModeOn;
     Edit.pictureChange();
   }
+  if (key == ENTER) {
+    if (inGame) {
+      inGame = false;
+      println("Left Game level: "+level);
+    }
+  }
 }
 
 
@@ -338,6 +441,14 @@ void loadImages() {
   checkpoint = loadImage("checkpoint.png");
   BEditModeOff = loadImage("BEditModeOff.png");
   BEditModeOn = loadImage("BEditModeOn.png");
+  BLevel1 = loadImage("BLevel1.png");
+  BLevel2 = loadImage("BLevel2.png");
+  BLevelX = loadImage("BLevelX.png");
+  BLevel1Glow = loadImage("BLevel1Glow.png");
+  right = loadImage("right.png");
+  rightGlow = loadImage("rightGlow.png");
+  left = loadImage("left.png");
+  leftGlow = loadImage("leftGlow.png");
 }
 
 

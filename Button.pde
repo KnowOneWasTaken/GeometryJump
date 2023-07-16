@@ -21,7 +21,8 @@ class Button {
   boolean secondImg = false;
   color c = color(150, 150, 200);
   boolean isHovered = false, isPressed = false, wasReleased = false, wasPressed = false, isMouseRealease = false, isMousePressed = false;
-  
+  boolean glow = false;
+
   void update() {
     boolean wasHovered = isHovered;
     isHovered = touch() && hitbox;
@@ -40,7 +41,7 @@ class Button {
   }
 
   void showMove(int xa, int ya) {
-    x = xa; 
+    x = xa;
     y = ya;
     show2();
     if (help) {
@@ -50,9 +51,9 @@ class Button {
 
   void show2() {
     float Touch, Click;
-    int w=widthB; 
+    int w=widthB;
     int h = heightB;
-    PImage pic; 
+    PImage pic;
     if (bigB) {
       Touch = bigTouch;
       Click = bigClick;
@@ -61,14 +62,14 @@ class Button {
       Click = smallClick;
     }
     switch (picture) {
-    case 1:  
-      pic = img; 
+    case 1:
+      pic = img;
       break;
     case 2:
-      pic = img2; 
+      pic = img2;
       break;
-    default: 
-      pic =img; 
+    default:
+      pic =img;
       break;
     }
     if (touch()) {
@@ -125,32 +126,38 @@ class Button {
     }
     if (secondImg==false) {
       try {
-      image(pic, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      } catch(Exception e) {
-       println(e);
-       println(pic);
-       println(img);
-       println(BEditModeOff);
+        if(glow == false) {
+        image(pic, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        } else {
+          image(img2, (x+w*((1-groesse)/2)) - (w-(1-groesse)*w)/2, (y+(h*(1-groesse)/2)) - (h-(1-groesse)*h)/2, (w-(1-groesse)*w)*2, (h-(1-groesse)*h)*2);
+          image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+      }
+      catch(Exception e) {
+        println(e);
       }
     } else {
-      noTint();
-      if (picture==1&&mousePressed==false) {
-        image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      }
-      if (picture==1&&mousePressed==true&&touch()) {
-        image(img2, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      }
-      if (picture==2&&mousePressed==false) {
-        image(img3, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      }
-      if (picture==2&&mousePressed==true&&touch()) {
-        image(img4, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      }
-      if (picture==1&&mousePressed==true&&touch()==false) {
-        image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
-      }
-      if (picture==2&&mousePressed==true&&touch()==false) {
-        image(img3, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+      if (glow == false) {
+        noTint();
+        if (picture==1&&mousePressed==false) {
+          image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+        if (picture==1&&mousePressed==true&&touch()) {
+          image(img2, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+        if (picture==2&&mousePressed==false) {
+          image(img3, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+        if (picture==2&&mousePressed==true&&touch()) {
+          image(img4, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+        if (picture==1&&mousePressed==true&&touch()==false) {
+          image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+        if (picture==2&&mousePressed==true&&touch()==false) {
+          image(img3, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        }
+      } else {
       }
     }
     noTint();
@@ -281,7 +288,7 @@ class Button {
   }
 
   void setWH(int w, int h) {
-    widthB = w; 
+    widthB = w;
     heightB = h;
     if (help) {
       println(bl()+"width and height set to: "+w+", "+h);
@@ -538,7 +545,8 @@ class Button {
 
   void standard() {
     secondImg=false;
-    img3=img2;img4=img3;
+    img3=img2;
+    img4=img3;
   }
 
   Button(PImage imgc, PImage img2c, PImage img3c, PImage img4c, int xc, int yc, int widthBc, int heightBc, boolean roundc, boolean secondImg) {// bigB,standard with second image, width, height, picture and round
@@ -1425,5 +1433,29 @@ class Button {
     y2 =y;
     help = helpc;
     standard();
+  }
+
+  Button(boolean bigBc, PImage imgc, PImage img2c, boolean helpc, int xc, int yc, int widthBc, int heightBc, int picturec, boolean roundc, boolean glow) {// bigB,standard with second image, width, height, picture and round
+    img = imgc;
+    x = xc;
+    y = yc;
+    widthB= widthBc;
+    heightB=heightBc;
+    round = roundc;
+    if (picturec==1||picturec==2) {
+      picture = picturec;
+    } else {
+      if (help) {
+        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+      }
+      picture=1;
+    }
+    bigB = bigBc;
+    img2 = img2c;
+    x2 = x;
+    y2 =y;
+    help = helpc;
+    standard();
+    this.glow = glow;
   }
 }

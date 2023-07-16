@@ -33,7 +33,9 @@ class Player extends Figure {
       player.x = 0;
       player.y = -blockSize;
     }
-    playSound(reset, 0.5, true);
+    if (worldFigure.size() != 0) {
+      playSound(reset, 0.5, true);
+    }
     vx = 0;
     vy = 0;
   }
@@ -61,6 +63,7 @@ class Player extends Figure {
     //displays data on the top left corner
     if (editModeOn) {
       fill(255);
+      textSize(10);
       noStroke();
       text(int(grounded), 10, 10);
       text("vx: "+vx, 10, 22, 10);

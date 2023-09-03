@@ -106,7 +106,7 @@ void draw() {
     Edit.show();
   } else {
     background(0);
-    backgroundAnimation();
+
     if (everythingLoaded) {
       playSound(background1, 0.2);
       switch(level) {
@@ -120,11 +120,18 @@ void draw() {
         LevelX.show();
         fill(255);
         textSize(170*(width/1920f));
+        if(LevelX.touch()) {
+         tint(150, 150, 200); 
+        } else {
+         noTint(); 
+        }
         text(level, 1180*(width/1920f), 590*(height/1080f));
+        println(LevelX.touch());
       }
       SkipRight.show();
       SkipLeft.show();
     }
+        backgroundAnimation();
   }
   for (int i = 0; i < particles.size(); i++) {
     particles.get(i).update();
@@ -295,7 +302,7 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
     catch(Exception e) {
       println("Error in addFigure() while saving world into "+level+".json");
       println(e);
-      delay(1000);
+      delay(500);
       try {
         saveJSONArray(world, "data/level"+level+".json");
       }
@@ -343,7 +350,7 @@ void updateIDs() {
     println("Error in updateIDs(): could'nt save temp into world.json");
     println(e);
     println("After a delay, it will try again");
-    delay(1000);
+    delay(500);
     try {
       saveJSONArray(temp, "data/world.json");
     }
@@ -371,7 +378,21 @@ void reloadFigures(String fileName) {
     worldFigures.clear();
     addFigure("wall", 0, 0, 1, 1);
   }
-  saveJSONArray(world, "data/world.json");
+  try {
+      saveJSONArray(world, "data/world.json");
+    }
+    catch(Exception e) {
+      println("Error in reloadFigures() while saving world into data/world.json");
+      println(e);
+      delay(500);
+      try {
+        saveJSONArray(world, "data/world.json");
+      }
+      catch(Exception e2) {
+        println("Couldn't save world after delay loading time");
+        println(e2);
+      }
+    }
   println("reloadFigures(): world saved as world.json");
   worldFigures.clear();
   println("reloadFigures(): worldFigures cleard");

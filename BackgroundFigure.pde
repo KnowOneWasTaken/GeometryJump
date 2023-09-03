@@ -2,7 +2,7 @@ class BackgroundFigure extends Figure {
   PImage img, imgGlow;
   float vx, vy;
   float posX, posY;
-  int rotation, vRotate;
+  float rotation, vRotate;
   BackgroundFigure(int x, int y, int w, int h) {
     super(x, y, w, h);
     this.vx = random(-0.7, 0.7);
@@ -10,7 +10,7 @@ class BackgroundFigure extends Figure {
     posX = x;
     posY = y;
     rotation = int(random(0, 360));
-    vRotate = int(random(-5, 5));
+    vRotate = int(random(-20, 20));
     switch(round(random(0, 6))) {
     case 0:
       img = play;
@@ -48,15 +48,16 @@ class BackgroundFigure extends Figure {
   }
 
   @Override void show() {
-    rotation += round(vRotate/10.0);
-    translate(x, y);
-    rotate(rotation/(2.0*PI));
+    rotation += vRotate/10.0f;
+
+    translate(int(x), int(y));
+    rotate(int(rotation)/(20.0*PI));
     if (imgGlow != null) {
-      image(imgGlow, -w/2, -h/2, w*2, h*2);
+      image(imgGlow, -w, -h, w*2, h*2);
     }
-    image(img, 0, 0, w, h);
-    rotate(-rotation/(2.0*PI));
-    translate(-x, -y);
+    image(img, -w/2, -h/2, w, h);
+    rotate(-int(rotation)/(20.0*PI));
+    translate(-int(x), -int(y));
   }
 
   void checkPosition() {

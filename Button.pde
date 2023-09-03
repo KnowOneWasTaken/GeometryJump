@@ -22,11 +22,10 @@ class Button {
   color c = color(150, 150, 200);
   boolean isHovered = false, isPressed = false, wasReleased = false, wasPressed = false, isMouseRealease = false, isMousePressed = false;
   boolean glow = false;
+  String print = "[Button-Libary] ";
 
   void update() {
-    boolean wasHovered = isHovered;
     isHovered = touch() && hitbox;
-    boolean wasPressed = isPressed;
     isPressed = touch() && mousePressed && hitbox && mouseButton==LEFT;
     boolean wasMousePressed = isMousePressed;
     isMousePressed = mousePressed && mouseButton == LEFT;
@@ -45,7 +44,7 @@ class Button {
     y = ya;
     show2();
     if (help) {
-      println(bl()+"Button shown on: "+x+", "+y);
+      println(print+"showMove(): Button shown on: "+x+", "+y);
     }
   }
 
@@ -126,8 +125,8 @@ class Button {
     }
     if (secondImg==false) {
       try {
-        if(glow == false) {
-        image(pic, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
+        if (glow == false) {
+          image(pic, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
         } else {
           image(img2, (x+w*((1-groesse)/2)) - (w-(1-groesse)*w)/2, (y+(h*(1-groesse)/2)) - (h-(1-groesse)*h)/2, (w-(1-groesse)*w)*2, (h-(1-groesse)*h)*2);
           image(img, x+w*((1-groesse)/2), y+(h*(1-groesse)/2), w-(1-groesse)*w, h-(1-groesse)*h);
@@ -190,7 +189,7 @@ class Button {
   void setImg(PImage Pimage) {
     img = Pimage;
     if (help) {
-      println(bl()+"img set to a new PImage");
+      println(print+"setImg(): img set to a new PImage");
     }
   }
 
@@ -204,14 +203,14 @@ class Button {
   void setImg2(PImage Pimage) {
     img2 = Pimage;
     if (help) {
-      println(bl()+"img2 set to a new PImage");
+      println(print+"setImg2(): img2 set to a new PImage");
     }
   }
   void setImg(PImage Pimage, PImage Pimage2) {
     img = Pimage;
     img2 = Pimage2;
     if (help) {
-      println(bl()+"img and img2 set to new PImage(s)");
+      println(print+"setImg(): img and img2 set to new PImage(s)");
     }
   }
 
@@ -239,7 +238,7 @@ class Button {
     x2=xa;
     y2=ya;
     if (help) {
-      println(bl()+"x and y set to: "+x+", "+y);
+      println(print+"setXY(): x and y set to: "+x+", "+y);
     }
   }
 
@@ -255,7 +254,7 @@ class Button {
     x = xa;
     x2=xa;
     if (help) {
-      println(bl()+"x set to: "+x);
+      println(print+"setX(): x set to: "+x);
     }
   }
 
@@ -263,14 +262,14 @@ class Button {
     y = ya;
     y2=ya;
     if (help) {
-      println(bl()+"y set to: "+y);
+      println(print+"setY(): y set to: "+y);
     }
   }
 
   void setW(int w) {
     widthB=w;
     if (help) {
-      println(bl()+"width set to: "+w);
+      println(print+"setW(): width set to: "+w);
     }
   }
 
@@ -280,7 +279,7 @@ class Button {
   void setH(int h) {
     heightB=h;
     if (help) {
-      println(bl()+"height set to: "+y);
+      println(print+"setH(): height set to: "+y);
     }
   }
   int getH() {
@@ -291,7 +290,7 @@ class Button {
     widthB = w;
     heightB = h;
     if (help) {
-      println(bl()+"width and height set to: "+w+", "+h);
+      println(print+"setWH(): width and height set to: "+w+", "+h);
     }
   }
 
@@ -302,7 +301,7 @@ class Button {
       picture = 1;
     }
     if (help) {
-      println(bl()+"picture set to: "+picture);
+      println(print+"pictureChange(): picture set to: "+picture);
     }
   }
 
@@ -317,7 +316,7 @@ class Button {
   void setBig(boolean b) {
     bigB = b;
     if (help) {
-      println(bl()+"bigB set to: "+bigB);
+      println(print+"setBig(): bigB set to: "+bigB);
     }
   }
 
@@ -328,7 +327,7 @@ class Button {
   void setRound(boolean b) {//sets the variable round to true or false
     round = b;
     if (help) {
-      println(bl()+"round set to: "+round);
+      println(print+"setRound(): round set to: "+round);
     }
   }
 
@@ -336,17 +335,17 @@ class Button {
     if (i==1||i==2) {
       if ((picture == 1 && i == 1) || (picture == 2 && i ==2)) {
         if (help) {
-          println(bl()+"picture didn't changed");
+          println(print+"setPicture(): picture didn't changed");
         }
       } else {
         picture = i;
         if (help) {
-          println(bl()+"picture set to: "+picture);
+          println(print+"setPicture(): picture set to: "+picture);
         }
       }
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+i+ ", it must be 1 or 2");
+        println(print+"setPicture(): The picture can not be changed to "+i+ ", it must be 1 or 2");
       }
     }
   }
@@ -356,7 +355,7 @@ class Button {
     img = img2;
     img2=storage;
     if (help) {
-      println(bl()+"Images switched");
+      println(print+"imgChange(): Images switched");
     }
   }
   void clickedReset() {
@@ -364,13 +363,13 @@ class Button {
   }
 
   void clicked() {
-    println(bl()+"Button clicked "+(clicked+1)+" time(s)");
+    println(print+"clicked(): Button clicked "+(clicked+1)+" time(s)");
     clicked++;
   }
 
   void clicked(boolean b) {
     if (b) {
-      println(bl()+"Button clicked "+(clicked+1)+" time(s)");
+      println(print+"clicked(): Button clicked "+(clicked+1)+" time(s)");
     }
     clicked++;
   }
@@ -381,14 +380,6 @@ class Button {
 
   void setClicked(int i) {
     clicked = i;
-  }
-
-  String bl() {
-    return "[Button-Libary] ";
-  }
-
-  void bl(String t) {
-    println(bl()+t);
   }
 
   void help() {
@@ -636,7 +627,7 @@ class Button {
       picture = picturec;
     } else {
       if (help==true) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -660,7 +651,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -742,7 +733,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -766,7 +757,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -848,7 +839,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -872,7 +863,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -954,7 +945,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -978,7 +969,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1062,7 +1053,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1087,7 +1078,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1174,7 +1165,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1199,7 +1190,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1286,7 +1277,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1311,7 +1302,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1398,7 +1389,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1423,7 +1414,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }
@@ -1446,7 +1437,7 @@ class Button {
       picture = picturec;
     } else {
       if (help) {
-        println(bl()+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
+        println(print+"The picture can not be changed to "+picturec+ ", it must be 1 or 2");
       }
       picture=1;
     }

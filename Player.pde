@@ -27,9 +27,9 @@ class Player extends Figure {
     if (getFigureAt(int(checkpointBlock.x*blockSize+blockSize/2), int(checkpointBlock.y*blockSize+blockSize+blockSize/2)).getClass() == ch.getClass()) {
       player.x = checkpointBlock.x*blockSize;
       player.y = (checkpointBlock.y)*blockSize;
-      println("Player got reset to Checkpoint");
+      println("Player: resetToCheckpoint(): Player got reset to Checkpoint");
     } else {
-      println("Checkpoint not found: Player got reset to default");
+      println("Player: resetToCheckpoint(): Checkpoint not found: Player got reset to default");
       framesSinceStarted = 0;
       player.x = 0;
       player.y = -blockSize;
@@ -46,7 +46,7 @@ class Player extends Figure {
       if (getFigureAt(int(x+w/15f), int(y-blockSize/2)).hitbox.solid == false && getFigureAt(int(x+w-w/15f), int(y-blockSize/2)).hitbox.solid == false) {
         vy = vy - 18;
         playSound(jump, 0.5, true);
-        println("jump");
+        println("Player: jump");
       }
     }
   }
@@ -110,7 +110,8 @@ class Player extends Figure {
           if (f.getClass() == co.getClass()&& editModeOn == false) {
             playSound(collectCoin, 0.7, true);
             delID = f.id;
-            println("Coin collected");
+            coinAnimation(int(x+w/2), int(y+h));
+            println("Player: hitbox(): Coin collected");
             coinsCollected++;
           }
         } else {
@@ -136,7 +137,7 @@ class Player extends Figure {
             if (grounded) {
               vy = vy -50;
               playSound(jumpSlime, 0.5, true);
-              println("Slime jump");
+              println("Player: hitbox(): Slime jump");
             }
           }
           if (f.getClass() == ch.getClass() || f.getClass() == go.getClass()) {
@@ -144,7 +145,7 @@ class Player extends Figure {
               if (int(checkpointBlock.x) != int(f.x/blockSize) || int(checkpointBlock.y) != int((f.y/blockSize)-1)) {
                 if (f.getClass() == go.getClass() && editModeOn == false) {
                   playSound(goalSound);
-                  println("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins!");
+                  println("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins and took "+framesSinceStarted+" frames!");
                   fill(255);
                   textSize(50);
                   text("You collected "+coinsCollected +" Coins!", width/2-textWidth("You collected ")/2, height/2);
@@ -156,21 +157,23 @@ class Player extends Figure {
                       println("times.json loaded");
                     }
                     catch(Exception e2) {
+                      println("Error in: Player: hitbox(): ");
+                      println("Exception 2: "+e2);
                       levelTimes = new JSONObject();
                       levelTimes.setInt("frames", 2147483647);
-                      println("Exception 2: "+e2);
                     }
                     levelTimes.setInt("level", level);
                     int frames = levelTimes.getInt("frames");
-                    println("frames Count in times.json found");
+                    println("Player: hitbox(): frames Count in times.json found");
                     if (framesSinceStarted < frames) {
                       levelTimes.setInt("frames", framesSinceStarted);
                       times.setJSONObject(level, levelTimes);
                       saveJSONArray(times, "data/times.json");
-                      println("JSONArray saved");
+                      println("Player: hitbox(): JSONArray for Times saved");
                     }
                   }
                   catch(Exception e) {
+                    println("Error in: Player: hitbox(): ");
                     println(e);
                     JSONArray times = new JSONArray();
                     levelTimes = new JSONObject();
@@ -178,13 +181,13 @@ class Player extends Figure {
                     levelTimes.setInt("level", level);
                     times.setJSONObject(level, levelTimes );
                     saveJSONArray(times, "data/times.json");
-                                        println("New times.json made");
+                    println("Player: hitbox(): New times.json made");
                   }
                   delay(3000);
                   inGame = false;
                 } else {
                   checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
-                  println("Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
+                  println("Player: hitbox(): Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
                   playSound(collectCoin, 0.5, true);
                 }
               }

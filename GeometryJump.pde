@@ -1,11 +1,13 @@
-//This section imports the necessary sound libraries used in the program.
+//This section imports the necessary sound library and declares the SoundFiles used in the program.
 import processing.sound.*;
 SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, tabChange;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
-PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow;
+PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar, particleWall;
 
 Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX;
+
+ArrayList<Particle> particles = new ArrayList<Particle>();
 
 ArrayList<Figure> worldFigures = new ArrayList<Figure>();
 Player player;
@@ -30,11 +32,14 @@ boolean inGame = false; //indicates if the game is running (true) or if the play
 int level = 1; //selects level 1 as default
 int levelAmount = 3; //indicates how many levels there are which should not be altered by in Game editing
 int levelAmountButtons = 0; //indicates how many button-images/ buttons there are for the level-selection
-int framesSinceStarted = 0;
+int framesSinceStarted = 0; //counts the frames, since the player has started a level (reset by death)
+
+BackgroundFigure[] bgFigures = new BackgroundFigure[15]; //Figures floating in Menue
+boolean everythingLoaded = false;
 
 //called once at launch
 void setup() {
-  fullScreen(P3D);
+  fullScreen(P2D);
   //size(480, 300);
 
   frameRate(50);
@@ -49,7 +54,7 @@ void setup() {
   go = new Goal();
 
   player = new Player(0, -1, 60, 60);
-  cam = new Cam(0, 0, 540, 540);
+  cam = new Cam(0, 0, 1920, 1080);
 
   Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-180*(width/1920f)), int(20*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
   Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-int(320*(width/1920f)), height/2-int(220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
@@ -61,6 +66,8 @@ void setup() {
   LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
   SkipLeft = new Button(true, left, leftGlow, false, int(width/2+(-320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+
+  setupBGAnimation();
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
@@ -99,22 +106,43 @@ void draw() {
     Edit.show();
   } else {
     background(0);
-    playSound(background1, 0.2);
-    switch(level) {
-    case 1:
-      Level1.show();
-      break;
-    case 2:
-      Level2.show();
-      break;
-    default:
-      LevelX.show();
-      fill(255);
-      textSize(170*(width/1920f));
-      text(level, 1180*(width/1920f), 590*(height/1080f));
+    backgroundAnimation();
+    if (everythingLoaded) {
+      playSound(background1, 0.2);
+      switch(level) {
+      case 1:
+        Level1.show();
+        break;
+      case 2:
+        Level2.show();
+        break;
+      default:
+        LevelX.show();
+        fill(255);
+        textSize(170*(width/1920f));
+        text(level, 1180*(width/1920f), 590*(height/1080f));
+      }
+      SkipRight.show();
+      SkipLeft.show();
     }
-    SkipRight.show();
-    SkipLeft.show();
+  }
+  for (int i = 0; i < particles.size(); i++) {
+    particles.get(i).update();
+  }
+}
+
+void backgroundAnimation() {
+  for (int i = 0; i < bgFigures.length; i++) {
+    bgFigures[i].move();
+    bgFigures[i].checkPosition();
+    bgFigures[i].show();
+  }
+}
+
+void setupBGAnimation() {
+  for (int i = 0; i < bgFigures.length; i++) {
+    int size = int(random(20, 70));
+    bgFigures[i] = new BackgroundFigure(int(random(0, width)), int(random(0, height)), size, size);
   }
 }
 
@@ -122,7 +150,7 @@ void startLevel(int lvl) {
   world = new JSONArray();
   worldFigures.clear();
   coinsCollected = 0;
-  println("world and worldFigures cleared");
+  println("startLevel(): world and worldFigures cleared");
   player.checkpointBlock = new PVector(0, -1);
   player.resetToCheckpoint();
   try { // trys to load the world.json file
@@ -141,12 +169,12 @@ void startLevel(int lvl) {
       fileName = "level"+level;
       break;
     }
-    println("Try to load "+fileName);
+    println("startLevel(): Try to load "+fileName);
     reloadFigures(fileName);
     updateIDs();
   }
   catch(Exception e) { //if the file could'nt be loaded: adds one block beneath the player
-    println("No world map found");
+    println("startLevel(): No world map found");
     world = new JSONArray();
     addFigure("wall", 0, 0, 1, 1);
     saveJSONArray(world, "data/level"+lvl+".json");
@@ -216,7 +244,7 @@ Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
   case "goal":
     return new Goal(x, y, w, h, id);
   default:
-    println("Error in Main createFigure(), createFigure(): ObjectClass coujld'nt be resolved");
+    println("createFigure(): Error: ObjectClass coujld'nt be resolved");
     return new Figure(0, 0, 0, 0, -1);
   }
 }
@@ -258,12 +286,27 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   //}
   worldFigures.add(createFigure(ObjectClass, x, y, w, h, id));
   world.setJSONObject(id, figure);
-  saveJSONArray(world, "data/world.json");
+
+
   if (level > levelAmount) {
-    saveJSONArray(world, "data/level"+level+".json");
+    try {
+      saveJSONArray(world, "data/level"+level+".json");
+    }
+    catch(Exception e) {
+      println("Error in addFigure() while saving world into "+level+".json");
+      println(e);
+      delay(1000);
+      try {
+        saveJSONArray(world, "data/level"+level+".json");
+      }
+      catch(Exception e2) {
+        println("Couldn't save world after delay loading time");
+        println(e2);
+      }
+    }
   }
-  println("Added Figure of class: "+ObjectClass);
-  println("New Figure saved in worldFigures, world and world.json: id: "+id);
+  println("addFigure(): Added Figure of class: "+ObjectClass);
+  println("addFigure(): New Figure saved in worldFigures, world and world.json: id: "+id);
 }
 
 
@@ -276,8 +319,8 @@ void removeFigure(int id) {
     updateIDs();
   }
   catch(Exception e) {
-    println("Error while removing a Figure: id: "+id+", worldFigures.size():"+worldFigures.size());
-    println("Error catched:");
+    println("removeFigure(): Error while removing a Figure: id: "+id+", worldFigures.size():"+worldFigures.size());
+    println("removeFigure(): Error catched:");
     println(e);
     updateIDs();
   }
@@ -293,8 +336,23 @@ void updateIDs() {
     jsn.setInt("id", i);
   }
   world = temp;
-  saveJSONArray(temp, "data/world.json");
-  println("updated ids into world and world.json");
+  try {
+    saveJSONArray(temp, "data/world.json");
+  }
+  catch(Exception e) {
+    println("Error in updateIDs(): could'nt save temp into world.json");
+    println(e);
+    println("After a delay, it will try again");
+    delay(1000);
+    try {
+      saveJSONArray(temp, "data/world.json");
+    }
+    catch(Exception e2) {
+      println("Error in updateIDs(): could'nt save temp into world.json after delay");
+      println(e2);
+    }
+  }
+  println("updateIDs(): updated IDs into world and world.json");
   reloadFigures("world");
 }
 
@@ -304,24 +362,24 @@ void reloadFigures(String fileName) {
   try {
     world = new JSONArray();
     world = loadJSONArray(fileName+".json");
-    println("world cleared and then loaded "+fileName+" into world");
+    println("reloadFigures(): world cleared and then loaded "+fileName+" into world");
   }
   catch(Exception e) {
-    println("World-File not found: "+fileName);
+    println("reloadFigures(): World-File not found: "+fileName);
     println("Exception: "+e);
     world = new JSONArray();
     worldFigures.clear();
     addFigure("wall", 0, 0, 1, 1);
   }
   saveJSONArray(world, "data/world.json");
-  println("world saved as world.json");
+  println("reloadFigures(): world saved as world.json");
   worldFigures.clear();
-  println("worldFigures cleard");
+  println("reloadFigures(): worldFigures cleard");
   for (int i = 0; i < world.size(); i++) {
     JSONObject jsn = world.getJSONObject(i);
     worldFigures.add(createFigure(jsn.getString("class"), jsn.getInt("x"), jsn.getInt("y"), 1, 1, jsn.getInt("id")));
   }
-  println("worldFigure from world added");
+  println("reloadFigures(): worldFigures from world added; level: "+level);
   //println("Reloaded Figures of level: "+fileName);
   //println(level);
 }
@@ -330,7 +388,7 @@ void reloadFigures(String fileName) {
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
   if (inGame) {
-    println(getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
+    println("mouseReleased(): "+getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
     if (editModeOn && Edit.touch() == false) {
       if (editMode != "remove") {
         addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
@@ -339,13 +397,13 @@ void mouseReleased() {
       } else {
         Figure f = getFigureAt(cam.getInWorldCoord(mouseX, mouseY));
         if (f.id != -1) {
-          println("Trying to remove Figure, id: "+f.id);
+          println("mouseReleased(): Trying to remove Figure, id: "+f.id);
           removeFigure(f.id);
           updateIDs();
-          println("Figure removed");
+          println("mouseReleased(): Figure removed");
           playSound(click, 0.5, true);
         } else {
-          println("MouseReleased: RemoveFigure: No Figure at this position found!");
+          println("mouseReleased(): RemoveFigure: No Figure at this position found!");
         }
       }
     }
@@ -354,37 +412,42 @@ void mouseReleased() {
       Edit.pictureChange();
       playSound(click, 0.7, true);
     }
-  } else {
+  } else if (everythingLoaded) {
     if (Level1.touch()&&mouseButton==LEFT && level == 1) {
+      println("mouseReleased(): Button pressed: Start Level 1");
       level = 1;
       inGame = true;
       startLevel(level);
-      println("Button pressed: Start Level 1");
       playSound(tabChange, 0.7, true);
     }
     if (Level2.touch()&&mouseButton==LEFT && level == 2) {
+      println("mouseReleased(): Button pressed: Start Level 2");
       level = 2;
       inGame = true;
-      println("Button pressed: Start Level 2");
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
     if (LevelX.touch()&&mouseButton==LEFT && level > levelAmountButtons) {
+      println("mouseReleased(): Button pressed: Start Level "+level);
       inGame = true;
-      println("Button pressed: Start Level "+level);
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
     if (SkipRight.touch()&&mouseButton==LEFT) {
+      println("mouseReleased(): Button pressed: SkipRight: "+level);
       level++;
       playSound(click, 0.7, true);
     }
     if (SkipLeft.touch()&&mouseButton==LEFT) {
       if (level > 1) {
         level--;
+        println("mouseReleased(): Button pressed: SkipLeft: "+level);
       }
       playSound(click, 0.7, true);
     }
+    coinAnimation(mouseX, mouseY);
+  } else {
+    coinAnimation(mouseX, mouseY);
   }
 }
 
@@ -452,7 +515,9 @@ void keyReleased() {
   if (key == ENTER) {
     if (inGame) {
       inGame = false;
-      println("Left Game level: "+level);
+      cam.x = 0;
+      cam.y = 0;
+      println("keyReleased(): Left Game, level: "+level);
     }
   }
 }
@@ -483,6 +548,9 @@ void loadImages() {
   left = loadImage("left.png");
   leftGlow = loadImage("leftGlow.png");
   goalGlow = loadImage("goalGlow.png");
+  particleStar = loadImage("particleStar.png");
+  particleWall = loadImage("particleWall.png");
+  println("loadImages(): all images loaded");
 }
 
 
@@ -496,6 +564,8 @@ void loadSounds() {
   collectCoin = new SoundFile(this, "collectCoin.mp3");
   goalSound = new SoundFile(this, "goal.mp3");
   tabChange = new SoundFile(this, "tabChange.mp3");
+  println("loadSounds(): all sounds loaded");
+  everythingLoaded = true;
 }
 
 void playSound(SoundFile sound) {
@@ -558,5 +628,12 @@ void keyListener() {
   // Check if spacebar (' ') is pressed
   if (keysPressed[' ']) {
     player.jump();
+  }
+}
+
+void coinAnimation(int x, int y) {
+  for (int i = 0; i < 10; i++) {
+    particles.add(new Particle(x+int(random(-8,8)), y+int(random(-8,8)), particleStar));
+    println("checkpointAnimation(): Added 10 particles");
   }
 }

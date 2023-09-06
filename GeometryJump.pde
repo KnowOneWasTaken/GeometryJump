@@ -21,7 +21,7 @@ String editMode = "wall"; //default for the world-edit mode: selects box/walls a
 boolean editModeOn = false; //idicates if the editMode is on or off
 boolean gravity = true; //indicates if gravity is in editModeOn active or not
 int coinsCollected = 0; //indicates how many coins the player has collected in a level
-float gameZoom = 1.8; //makes the gameplay bigger (zooms in), when you are on a smartphone
+float gameZoom = 1.0; //makes the gameplay bigger (zooms in), when you are on a smartphone
 
 //objects just to get their .getClass()
 Spike s;
@@ -643,7 +643,7 @@ void keyListener() {
     // Check if 'w' key is pressed
     if (keysPressed['w']) {
       if (player.vy >-maxSpeed) {
-        //player.vy -= speed;
+        player.vy -= speed;
       }
     }
     // Check if 's' key is pressed

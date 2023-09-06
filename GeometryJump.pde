@@ -6,7 +6,7 @@ SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, ta
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
   particleWall, clear, ButtonEXIT, particleSlime;
 
-Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX;
+Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX, Exit;
 
 ArrayList<Particle> particles = new ArrayList<Particle>();
 
@@ -21,6 +21,7 @@ String editMode = "wall"; //default for the world-edit mode: selects box/walls a
 boolean editModeOn = false; //idicates if the editMode is on or off
 boolean gravity = true; //indicates if gravity is in editModeOn active or not
 int coinsCollected = 0; //indicates how many coins the player has collected in a level
+float gameZoom = 1.8; //makes the gameplay bigger (zooms in), when you are on a smartphone
 
 //objects just to get their .getClass()
 Spike s;
@@ -54,21 +55,28 @@ void setup() {
   ch = new Checkpoint();
   go = new Goal();
 
-  player = new Player(0, -1, 60, 60);
   cam = new Cam(0, 0, 1920, 1080);
 
   Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-180*(width/1920f)), int(20*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
+  Exit = new Button(true, ButtonEXIT, ButtonEXIT, false, int(width-180*(width/1920f)), int(105*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
   Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-int(320*(width/1920f)), height/2-int(220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
-  println("x: "+Level1.x);
-  println("y: "+Level1.y);
-  println("w: "+Level1.widthB);
-  println("h: "+Level1.heightB);
   Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
   SkipLeft = new Button(true, left, leftGlow, false, int(width/2+(-320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
 
+  if (height > width) {
+    SkipRight = new Button(true, right, rightGlow, false, int(width/2+(550+40)*(width/1920f)), int(height/2-75*(height/1080f)), int(200*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+    SkipLeft = new Button(true, left, leftGlow, false, int(width/2-(550+40+200)*(width/1920f)), int(height/2-75*(height/1080f)), int(200*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+    Level1 = new Button(true, BLevel1, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), height/2-int(110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
+    Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), int(height/2-110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
+    LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), int(height/2-110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
+    Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-410*(width/1920f)), int(20*(height/1080f)), int(400*(width/1920f)), int(60*(height/1080f)));
+    Exit = new Button(true, ButtonEXIT, ButtonEXIT, false, int(width-410*(width/1920f)), int(85*(height/1080f)), int(400*(width/1920f)), int(60*(height/1080f)));
+  }
+
   setupBGAnimation();
+  player = new Player(0, -1, blockSize, blockSize);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
@@ -105,6 +113,7 @@ void draw() {
     //plays the background1 sound in a loop when it's loaded
     playSound(background1, 0.2);
     Edit.show();
+    Exit.show();
   } else {
     background(0);
 
@@ -120,19 +129,23 @@ void draw() {
       default:
         LevelX.show();
         fill(255);
-        textSize(170*(width/1920f));
-        if(LevelX.touch()) {
-         tint(150, 150, 200); 
+        if (LevelX.touch()) {
+          fill(150, 150, 200);
         } else {
-         noTint(); 
+          fill(255);
         }
-        text(level, 1180*(width/1920f), 590*(height/1080f));
-        println(LevelX.touch());
+        if (width> height) {
+          textSize(170*(width/1920f));
+          text(level, 1180*(width/1920f), 590*(height/1080f));
+        } else {
+          textSize(175*(width/1080f));
+          text(level, 735*(width/1080f), (height/2f)+50);
+        }
       }
       SkipRight.show();
       SkipLeft.show();
     }
-        backgroundAnimation();
+    backgroundAnimation();
   }
   for (int i = 0; i < particles.size(); i++) {
     particles.get(i).update();
@@ -160,7 +173,7 @@ void startLevel(int lvl) {
   coinsCollected = 0;
   println("startLevel(): world and worldFigures cleared");
   player.checkpointBlock = new PVector(0, -1);
-  player.resetToCheckpoint();
+  player.resetToCheckpoint(false);
   try { // trys to load the world.json file
     String fileName = "";
     switch (lvl) {
@@ -240,7 +253,7 @@ void showEditMode() {
 Figure createFigure(String ObjectClass, int x, int y, int w, int h, int id) {
   switch(ObjectClass) {
   case "wall":
-    return new Box(x, y, w, h, id);
+    return new Wall(x, y, w, h, id);
   case "spike":
     return new Spike(x, y, w, h, id);
   case "slime":
@@ -380,20 +393,20 @@ void reloadFigures(String fileName) {
     addFigure("wall", 0, 0, 1, 1);
   }
   try {
-      saveJSONArray(world, "data/world.json");
+    saveJSONArray(world, "data/world.json");
+  }
+  catch(Exception e) {
+    println("Error in reloadFigures() while saving world into data/world.json");
+    println(e);
+    delay(500);
+    try {
+      saveJSONArray(world, "world.json");
     }
-    catch(Exception e) {
-      println("Error in reloadFigures() while saving world into data/world.json");
-      println(e);
-      delay(500);
-      try {
-        saveJSONArray(world, "data/world.json");
-      }
-      catch(Exception e2) {
-        println("Couldn't save world after delay loading time");
-        println(e2);
-      }
+    catch(Exception e2) {
+      println("Couldn't save world after delay loading time");
+      println(e2);
     }
+  }
   println("reloadFigures(): world saved as world.json");
   worldFigures.clear();
   println("reloadFigures(): worldFigures cleard");
@@ -406,12 +419,10 @@ void reloadFigures(String fileName) {
   //println(level);
 }
 
-
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
-  if (inGame) {
-    println("mouseReleased(): "+getFigureAt(cam.getInWorldCoord(mouseX, mouseY)).getClass());
-    if (editModeOn && Edit.touch() == false) {
+ if (inGame) {
+    if (editModeOn && Edit.touch() == false && Exit.touch() == false) {
       if (editMode != "remove") {
         addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
         playSound(click, 0.5, true);
@@ -429,38 +440,48 @@ void mouseReleased() {
         }
       }
     }
-    if (Edit.touch()&&mouseButton==LEFT) {
+    if (Edit.touch() && mouseButton==LEFT) {
       editModeOn = !editModeOn;
       Edit.pictureChange();
       playSound(click, 0.7, true);
     }
+    if (Exit.touch() && mouseButton==LEFT) {
+      inGame = false;
+      cam.x = 0;
+      cam.y = 0;
+      println("mouseReleased(): Left Game, level: "+level);
+      playSound(tabChange, 0.7, true);
+    }
   } else if (everythingLoaded) {
-    if (Level1.touch()&&mouseButton==LEFT && level == 1) {
+    if (Level1.touch() && mouseButton==LEFT && level == 1) {
       println("mouseReleased(): Button pressed: Start Level 1");
       level = 1;
+      particles.clear();
       inGame = true;
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
-    if (Level2.touch()&&mouseButton==LEFT && level == 2) {
+    if (Level2.touch() && mouseButton==LEFT&& level == 2) {
       println("mouseReleased(): Button pressed: Start Level 2");
       level = 2;
+      particles.clear();
       inGame = true;
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
-    if (LevelX.touch()&&mouseButton==LEFT && level > levelAmountButtons) {
+    if (LevelX.touch() && mouseButton==LEFT && level > levelAmountButtons) {
       println("mouseReleased(): Button pressed: Start Level "+level);
       inGame = true;
+      particles.clear();
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
-    if (SkipRight.touch()&&mouseButton==LEFT) {
+    if (SkipRight.touch() && mouseButton==LEFT) {
       println("mouseReleased(): Button pressed: SkipRight: "+level);
       level++;
       playSound(click, 0.7, true);
     }
-    if (SkipLeft.touch()&&mouseButton==LEFT) {
+    if (SkipLeft.touch() && mouseButton==LEFT) {
       if (level > 1) {
         level--;
         println("mouseReleased(): Button pressed: SkipLeft: "+level);
@@ -615,14 +636,14 @@ void playSound(SoundFile sound, float amp, boolean multiple) {
 
 //This function handles the key inputs for movement and other actions in the game.
 void keyListener() {
-  int speed = 2;
-  int maxSpeed = 12;
+  float speed = 2;
+  float maxSpeed = 12;
 
   if (editModeOn) {
     // Check if 'w' key is pressed
     if (keysPressed['w']) {
       if (player.vy >-maxSpeed) {
-        player.vy -= speed;
+        //player.vy -= speed;
       }
     }
     // Check if 's' key is pressed

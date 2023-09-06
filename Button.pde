@@ -164,18 +164,22 @@ class Button {
 
 
   boolean touch() {
+    return touch(mouseX, mouseY);
+  }
+
+  boolean touch(int touchX, int touchY) {
     if (hitbox) {
       boolean roundB = round;
       if (roundB==false) {
         int r = x+widthB;
         int b=y+heightB;
-        if (mouseX<r && mouseX>x && mouseY<b&& mouseY>y) {
+        if (touchX<r && touchX>x && touchY<b&& touchY>y) {
           return true;
         } else {
           return false;
         }
       } else {
-        if (dist(mouseX, mouseY, x+widthB/2, y+heightB/2) < widthB/2) {
+        if (dist(touchX, touchY, x+widthB/2, y+heightB/2) < widthB/2) {
           return true;
         } else {
           return false;

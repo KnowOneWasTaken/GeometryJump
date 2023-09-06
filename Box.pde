@@ -1,7 +1,7 @@
-class Box extends Figure {
+class Wall extends Figure {
   int blockX, blockY, blockW, blockH;
   PImage box = wall, glow = wallGlow;
-  Box(int x, int y, int w, int h, int id) {
+  Wall(int x, int y, int w, int h, int id) {
     super(x*blockSize, y*blockSize, w*blockSize, h*blockSize);
     this.blockX = x;
     this.blockY = y;

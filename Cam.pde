@@ -8,7 +8,7 @@ class Cam {
   }
 
   void drawRect(int px, int py, int pw, int ph) {
-    rect(px-x, py-y, pw, ph);
+    rect((px-x)*gameZoom, (py-y)*gameZoom, (pw)*gameZoom, (ph)*gameZoom);
   }
 
   void drawLine(int x1, int y1, int x2, int y2) {
@@ -16,30 +16,30 @@ class Cam {
   }
 
   void update() {
-    x = int(player.x + player.w/2 - width/2);
-    y = int(player.y + player.h/2 - height/2);
+    x = int((player.x + player.w/2) - (width/2)/gameZoom);
+    y = int((player.y + player.h/2) - (height/2)/gameZoom);
   }
 
   void drawImage(PImage img, int x1, int y1, int w1, int h1) {
-    image(img, x1-x, y1-y, w1, h1);
+    image(img, (x1-x)*gameZoom, (y1-y)*gameZoom, w1*gameZoom, h1*gameZoom);
   }
 
   PVector getInImageCoord(int px, int py) {
-    return new PVector(px-x, py-y);
+    return new PVector((px-x)*gameZoom, (py-y)*gameZoom);
   }
   
   int getInWorldX(int px) {
-    return px + x;
+    return int((px + x)/gameZoom);
   }
   int getInWorldY(int py) {
-    return py + y;
+    return int((py + y)/gameZoom);
   }
 
   PVector getInWorldCoord(int px, int py) {
-    return new PVector(px+x, py+y);
+    return new PVector(int((px+x)/gameZoom), int((py+y)/gameZoom));
   }
   PVector getInWorldCoord(PVector v) {
-    return new PVector(v.x+x, v.y+y);
+    return new PVector(int((v.x+x)/gameZoom), int((v.y+y)/gameZoom));
   }
   
   int getInWorldXbyBlock(int px) {
@@ -48,12 +48,18 @@ class Cam {
   int getInWorldYbyBlock(int py) {
    return int(getInWorldCoordBlock(0,int(getInImageCoord(py,0).x)).y);
   }
-
+  
+  int getDisplayCoordX(int px) {
+     return px-x;
+  }
+  int getDisplayCoordY(int py) {
+     return py-y;
+  }
 
 //Returns the coordinates of the block that is at the specified on-screen-coordinates
   PVector getInWorldCoordBlock(int px, int py) {
-    float rx = ((px+x)*1f/blockSize);
-    float ry = ((py+y)*1f/blockSize);
+    float rx = ((x+(px)/gameZoom)*1f/blockSize);
+    float ry = ((y+(py)/gameZoom)*1f/blockSize);
     if (rx<0) {
       rx = -ceil(-rx); //rounds up
     } else {

@@ -18,18 +18,24 @@ class Player extends Figure {
     if (gravity || editModeOn == false) {
       vy = vy +1;
       if (y>250*blockSize) {
-        resetToCheckpoint();
+        resetToCheckpoint(true);
       }
     }
   }
 
-  void resetToCheckpoint() {
+  void resetToCheckpoint(boolean animation) {
     if (getFigureAt(int(checkpointBlock.x*blockSize+blockSize/2), int(checkpointBlock.y*blockSize+blockSize+blockSize/2)).getClass() == ch.getClass()) {
+      if (animation) {
+        deathAnimation(int(x+w/2), int(y+h/2));
+      }
       player.x = checkpointBlock.x*blockSize;
       player.y = (checkpointBlock.y)*blockSize;
       println("Player: resetToCheckpoint(): Player got reset to Checkpoint");
     } else {
       println("Player: resetToCheckpoint(): Checkpoint not found: Player got reset to default");
+      if (animation) {
+        deathAnimation(int(x+w/2), int(y+h/2));
+      }
       framesSinceStarted = 0;
       player.x = 0;
       player.y = -blockSize;
@@ -46,13 +52,13 @@ class Player extends Figure {
       if (getFigureAt(int(x+w/15f), int(y-blockSize/2)).hitbox.solid == false && getFigureAt(int(x+w-w/15f), int(y-blockSize/2)).hitbox.solid == false) {
         vy = vy - 18;
         playSound(jump, 0.5, true);
-        println("Player: jump");
+        //println("Player: jump");
       }
     }
   }
 
   void move(float dx, float dy) {
-    x = x + dx;
+    x = x + dx*(blockSize/60f);
     y = y + dy;
 
     hitbox.updateCoord(int(x), int(y), int(w), int(h));
@@ -83,9 +89,9 @@ class Player extends Figure {
 
   @Override void update() {
     gravity();
-    move(vx/2, vy/2);
+    move(vx/2, vy*(blockSize/60f)/2);
     hitbox();
-    move(vx/2, vy/2);
+    move(vx/2, vy*(blockSize/60f)/2);
     blockX = int(cam.getInWorldCoordBlock(int(x), int(y)).x);
     blockX = int(cam.getInWorldCoordBlock(int(x), int(y)).y);
     hitbox();
@@ -103,7 +109,7 @@ class Player extends Figure {
           if (f.getClass() == s.getClass()) {
             //if (sqrt(sq(move.x)+sq(move.y)) > w/8f) {
             if (editModeOn == false) {
-              resetToCheckpoint();
+              resetToCheckpoint(true);
             }
             //}
           }
@@ -115,14 +121,6 @@ class Player extends Figure {
             coinsCollected++;
           }
         } else {
-          if (move.x != 0) {
-            vx = 0;
-            vy = vy*0.95;
-            if (abs(vy) < 0.00001) {
-              vy = 0;
-            }
-          }
-
           if (move.y != 0) {
             if (move.y < 0) {
               grounded = true;
@@ -133,11 +131,20 @@ class Player extends Figure {
               vx = 0;
             }
           }
+          if (move.x != 0) {
+            vx = 0;
+            vy = vy*0.95;
+            if (abs(vy) < 0.00001) {
+              vy = 0;
+            }
+          }
+
           if (f.getClass() == sl.getClass()) {
             if (grounded) {
-              vy = vy -50;
+              vy = vy - 50;
               playSound(jumpSlime, 0.5, true);
-              println("Player: hitbox(): Slime jump");
+              slimeAnimation(int(x+w/2), int(y+h));
+              //println("Player: hitbox(): Slime jump");
             }
           }
           if (f.getClass() == ch.getClass() || f.getClass() == go.getClass()) {

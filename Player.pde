@@ -17,7 +17,7 @@ class Player extends Figure {
   void gravity() {
     if (gravity || editModeOn == false) {
       vy = vy +1;
-      if (y>250*blockSize) {
+      if (y>100*blockSize) {
         resetToCheckpoint(true);
       }
     }
@@ -124,6 +124,10 @@ class Player extends Figure {
           if (move.y != 0) {
             if (move.y < 0) {
               grounded = true;
+              println(abs(vx));
+              if(abs(vx) > 1 && random(0,10) > 9) {
+               wallAnimation(int(x+w/2), int(y+h));
+              }
             }
             vy = 0;
             vx = vx*0.6;

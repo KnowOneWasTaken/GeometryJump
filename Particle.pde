@@ -7,12 +7,12 @@ class Particle {
   float rotation, vRotate;
   PImage img;
   int maxTime;
-  Particle(int x, int y, PImage img, int size) {
+  Particle(int x, int y, PImage img, int size, int maxVX, int minVX, int maxVY, int minVY) {
     this.x = x;
     this.y = y;
     this.img = img;
-    vx = random(-5, 5);
-    vy = random(-20, -5);
+    vx = random(minVX, maxVX);
+    vy = random(minVY, maxVY);
     maxTime = int(random(40, 80));
     time = 0;
     rotation = random(0, 360);

@@ -30,7 +30,7 @@ Goal go;
 
 boolean inGame = false; //indicates if the game is running (true) or if the player is in the menue (false)
 int level = 1; //selects level 1 as default
-int levelAmount = 3; //indicates how many levels there are which should not be altered by in Game editing
+int levelAmount = 8; //indicates how many levels there are which should not be altered by in Game editing
 int levelAmountButtons = 0; //indicates how many button-images/ buttons there are for the level-selection
 int framesSinceStarted = 0; //counts the frames, since the player has started a level (reset by death)
 

@@ -3,7 +3,8 @@ import processing.sound.*;
 SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, tabChange;
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
-PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar, particleWall;
+PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
+  particleWall, clear, ButtonEXIT, particleSlime;
 
 Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX;
 
@@ -571,6 +572,9 @@ void loadImages() {
   goalGlow = loadImage("goalGlow.png");
   particleStar = loadImage("particleStar.png");
   particleWall = loadImage("particleWall.png");
+  clear = loadImage("clear.png");
+  ButtonEXIT = loadImage("ButtonEXIT.png");
+  particleSlime = loadImage("particleSlime.png");
   println("loadImages(): all images loaded");
 }
 
@@ -653,8 +657,26 @@ void keyListener() {
 }
 
 void coinAnimation(int x, int y) {
-  for (int i = 0; i < 10; i++) {
-    particles.add(new Particle(x+int(random(-8,8)), y+int(random(-8,8)), particleStar));
-    println("checkpointAnimation(): Added 10 particles");
+  particleAnimation(x, y, particleStar);
+}
+
+void particleAnimation(int x, int y, PImage img, int count, int size) {
+  for (int i = 0; i < count; i++) {
+    particles.add(new Particle(x+int(random(-8, 8)), y+int(random(-8, 8)), img, size));
   }
+}
+
+void particleAnimation(int x, int y, PImage img, int count) {
+  particleAnimation(x, y, img, count, 20);
+}
+void particleAnimation(int x, int y, PImage img) {
+  particleAnimation(x, y, img, 10);
+}
+
+void deathAnimation(int x, int y) {
+  particleAnimation(x, y, play, 20);
+}
+
+void slimeAnimation(int x, int y) {
+  particleAnimation(x, y, particleSlime, 7, 35);
 }

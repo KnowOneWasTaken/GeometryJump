@@ -4,7 +4,7 @@ SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, ta
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
-  particleWall, clear, ButtonEXIT, particleSlime;
+  particleWall, clear, ButtonEXIT, particleSlime, particleCheckpoint;
 
 Button Edit, SkipRight, SkipLeft, LevelX, Exit;
 
@@ -556,6 +556,7 @@ void loadImages() {
   clear = loadImage("clear.png");
   ButtonEXIT = loadImage("ButtonEXIT.png");
   particleSlime = loadImage("particleSlime.png");
+  particleCheckpoint = loadImage("particleCheckpoint.png");
   println("loadImages(): all images loaded");
 }
 
@@ -660,6 +661,10 @@ void deathAnimation(int x, int y) {
 
 void slimeAnimation(int x, int y) {
   particleAnimation(x, y, particleSlime, 7, 35);
+}
+
+void checkpointAnimation(int x, int y) {
+  particleAnimation(x, y, particleCheckpoint, 25, 20);
 }
 
 PImage levelXImage(int printLevel) {

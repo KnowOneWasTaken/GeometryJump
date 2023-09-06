@@ -190,10 +190,15 @@ class Player extends Figure {
                     saveJSONArray(times, "data/times.json");
                     println("Player: hitbox(): New times.json made");
                   }
-                  delay(3000);
+                  delay(2000);
                   inGame = false;
+                  cam.x = 0;
+                  cam.y = 0;
+                  println("keyReleased(): Left Game, level: "+level);
+                  playSound(tabChange, 0.7, true);
                 } else {
                   checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
+                  checkpointAnimation(int(x+w/2), int(y+h));
                   println("Player: hitbox(): Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
                   playSound(collectCoin, 0.5, true);
                 }

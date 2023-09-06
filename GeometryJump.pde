@@ -6,7 +6,7 @@ SoundFile click, background1, reset, jump, jumpSlime, collectCoin, goalSound, ta
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
   particleWall, clear, ButtonEXIT, particleSlime;
 
-Button Edit, Level1, Level2, SkipRight, SkipLeft, LevelX, Exit;
+Button Edit, SkipRight, SkipLeft, LevelX, Exit;
 
 ArrayList<Particle> particles = new ArrayList<Particle>();
 
@@ -33,7 +33,6 @@ Goal go;
 boolean inGame = false; //indicates if the game is running (true) or if the player is in the menue (false)
 int level = 1; //selects level 1 as default
 int levelAmount = 8; //indicates how many levels there are which should not be altered by in Game editing
-int levelAmountButtons = 0; //indicates how many button-images/ buttons there are for the level-selection
 int framesSinceStarted = 0; //counts the frames, since the player has started a level (reset by death)
 
 BackgroundFigure[] bgFigures = new BackgroundFigure[15]; //Figures floating in Menue
@@ -59,8 +58,6 @@ void setup() {
 
   Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-180*(width/1920f)), int(20*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
   Exit = new Button(true, ButtonEXIT, ButtonEXIT, false, int(width-180*(width/1920f)), int(105*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
-  Level1 = new Button(true, BLevel1, BLevel1Glow, false, width/2-int(320*(width/1920f)), height/2-int(220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
-  Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
   SkipLeft = new Button(true, left, leftGlow, false, int(width/2+(-320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
@@ -68,8 +65,6 @@ void setup() {
   if (height > width) {
     SkipRight = new Button(true, right, rightGlow, false, int(width/2+(550+40)*(width/1920f)), int(height/2-75*(height/1080f)), int(200*(width/1920f)), int(150*(height/1080f)), 1, false, true);
     SkipLeft = new Button(true, left, leftGlow, false, int(width/2-(550+40+200)*(width/1920f)), int(height/2-75*(height/1080f)), int(200*(width/1920f)), int(150*(height/1080f)), 1, false, true);
-    Level1 = new Button(true, BLevel1, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), height/2-int(110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
-    Level2 = new Button(true, BLevel2, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), int(height/2-110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
     LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-(550)*(width/1920f)), int(height/2-110*(height/1080f)), int((1100)*(width/1920f)), int(220*(height/1080f)), 1, false, true);
     Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-410*(width/1920f)), int(20*(height/1080f)), int(400*(width/1920f)), int(60*(height/1080f)));
     Exit = new Button(true, ButtonEXIT, ButtonEXIT, false, int(width-410*(width/1920f)), int(85*(height/1080f)), int(400*(width/1920f)), int(60*(height/1080f)));
@@ -77,6 +72,7 @@ void setup() {
 
   setupBGAnimation();
   player = new Player(0, -1, blockSize, blockSize);
+  LevelX.img = levelXImage(level);
 }
 
 //called in loop: It is responsible for continuously updating and rendering the graphics and animations of the program.
@@ -119,29 +115,7 @@ void draw() {
 
     if (everythingLoaded) {
       playSound(background1, 0.2);
-      switch(level) {
-      case 1:
-        Level1.show();
-        break;
-      case 2:
-        Level2.show();
-        break;
-      default:
-        LevelX.show();
-        fill(255);
-        if (LevelX.touch()) {
-          fill(150, 150, 200);
-        } else {
-          fill(255);
-        }
-        if (width> height) {
-          textSize(170*(width/1920f));
-          text(level, 1180*(width/1920f), 590*(height/1080f));
-        } else {
-          textSize(175*(width/1080f));
-          text(level, 735*(width/1080f), (height/2f)+50);
-        }
-      }
+      LevelX.show();
       SkipRight.show();
       SkipLeft.show();
     }
@@ -421,7 +395,7 @@ void reloadFigures(String fileName) {
 
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
- if (inGame) {
+  if (inGame) {
     if (editModeOn && Edit.touch() == false && Exit.touch() == false) {
       if (editMode != "remove") {
         addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
@@ -453,42 +427,28 @@ void mouseReleased() {
       playSound(tabChange, 0.7, true);
     }
   } else if (everythingLoaded) {
-    if (Level1.touch() && mouseButton==LEFT && level == 1) {
-      println("mouseReleased(): Button pressed: Start Level 1");
-      level = 1;
-      particles.clear();
-      inGame = true;
-      startLevel(level);
-      playSound(tabChange, 0.7, true);
-    }
-    if (Level2.touch() && mouseButton==LEFT&& level == 2) {
-      println("mouseReleased(): Button pressed: Start Level 2");
-      level = 2;
-      particles.clear();
-      inGame = true;
-      startLevel(level);
-      playSound(tabChange, 0.7, true);
-    }
-    if (LevelX.touch() && mouseButton==LEFT && level > levelAmountButtons) {
+    coinAnimation(mouseX, mouseY);
+    if (LevelX.touch() && mouseButton==LEFT) {
       println("mouseReleased(): Button pressed: Start Level "+level);
       inGame = true;
-      particles.clear();
+      particles.removeAll(particles);
       startLevel(level);
       playSound(tabChange, 0.7, true);
     }
     if (SkipRight.touch() && mouseButton==LEFT) {
       println("mouseReleased(): Button pressed: SkipRight: "+level);
       level++;
+      LevelX.img = levelXImage(level);
       playSound(click, 0.7, true);
     }
     if (SkipLeft.touch() && mouseButton==LEFT) {
       if (level > 1) {
         level--;
+        LevelX.img = levelXImage(level);
         println("mouseReleased(): Button pressed: SkipLeft: "+level);
       }
       playSound(click, 0.7, true);
     }
-    coinAnimation(mouseX, mouseY);
   } else {
     coinAnimation(mouseX, mouseY);
   }
@@ -700,4 +660,24 @@ void deathAnimation(int x, int y) {
 
 void slimeAnimation(int x, int y) {
   particleAnimation(x, y, particleSlime, 7, 35);
+}
+
+PImage levelXImage(int printLevel) {
+  PImage vorlage = loadImage("vorlage.png");
+  PGraphics pg= createGraphics(640, 440);
+  pg.beginDraw();
+  pg.image(vorlage, 0, 0);
+  pg.fill(255);
+  if (printLevel < 10) {
+    pg.textSize(200);
+  } else if(printLevel < 100){
+    pg.textSize(178);
+  } else if(printLevel < 1000){
+    pg.textSize(150);
+  } else {
+    pg.textSize(135);
+  }
+  pg.text("Level "+printLevel, 30, 270);
+  pg.endDraw();
+  return pg;
 }

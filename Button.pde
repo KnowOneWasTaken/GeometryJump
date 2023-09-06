@@ -133,6 +133,7 @@ class Button {
         }
       }
       catch(Exception e) {
+        println(print + "Error in show2(): couldn't draw Button");
         println(e);
       }
     } else {

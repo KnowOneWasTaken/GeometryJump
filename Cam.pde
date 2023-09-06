@@ -12,7 +12,7 @@ class Cam {
   }
 
   void drawLine(int x1, int y1, int x2, int y2) {
-    line(x1-x, y1-y, x2-x, y2-y);
+    line((x1-x)*gameZoom, (y1-y)*gameZoom, (x2-x)*gameZoom, (y2-y)*gameZoom);
   }
 
   void update() {

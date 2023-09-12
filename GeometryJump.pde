@@ -22,6 +22,7 @@ boolean editModeOn = false; //idicates if the editMode is on or off
 boolean gravity = true; //indicates if gravity is in editModeOn active or not
 int coinsCollected = 0; //indicates how many coins the player has collected in a level
 float gameZoom = 1.0; //makes the gameplay bigger (zooms in), when you are on a smartphone
+float backgroundMusicAmp = 1;
 
 //objects just to get their .getClass()
 Spike s;
@@ -529,6 +530,10 @@ void keyReleased() {
       particles.removeAll(particles);
     }
   }
+  if (key == 'u') {
+    backgroundMusicAmp = 1-backgroundMusicAmp;
+    println("Backgound Music volume set to: "+backgroundMusicAmp*100+"%");
+  }
 }
 
 
@@ -611,24 +616,26 @@ void playSound(SoundFile sound, float amp, boolean multiple) {
     if (sound.isPlaying() == false || multiple) {
       sound.play();
       sound.amp(amp);
-    }
+    } else if(sound.isPlaying() == true) {
+      sound.amp(amp+0.000000001);
   }
+}
 }
 
 void playBackgroundMusic() {
   switch(int(random(0, 2))) {
   case 0:
     if (background2.isPlaying() == false) {
-      playSound(background1, 0.8);
+      playSound(background1, 0.8*backgroundMusicAmp);
     }
     break;
   case 1:
     if (background1.isPlaying() == false) {
-      playSound(background2, 0.5);
+      playSound(background2, 0.5*backgroundMusicAmp);
     }
     break;
   default:
-    playSound(background1, 0.8);
+    playSound(background1, 0.8*backgroundMusicAmp);
     break;
   }
 }

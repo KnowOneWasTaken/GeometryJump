@@ -1008,350 +1008,350 @@
     "class": "wall"
   },
   {
-    "x": 2,
-    "y": -46,
-    "id": 168,
-    "class": "checkpoint"
-  },
-  {
     "x": 8,
     "y": -30,
-    "id": 169,
+    "id": 168,
     "class": "wall"
   },
   {
     "x": 10,
     "y": -31,
-    "id": 170,
+    "id": 169,
     "class": "spike"
   },
   {
     "x": 10,
     "y": -32,
-    "id": 171,
+    "id": 170,
     "class": "spike"
   },
   {
     "x": 11,
     "y": -32,
-    "id": 172,
+    "id": 171,
     "class": "wall"
   },
   {
     "x": 12,
     "y": 6,
-    "id": 173,
+    "id": 172,
     "class": "wall"
   },
   {
     "x": 9,
     "y": 6,
-    "id": 174,
+    "id": 173,
     "class": "spike"
   },
   {
     "x": 9,
     "y": 4,
-    "id": 175,
+    "id": 174,
     "class": "spike"
   },
   {
     "x": 9,
     "y": 2,
-    "id": 176,
+    "id": 175,
     "class": "spike"
   },
   {
     "x": 9,
     "y": 0,
-    "id": 177,
+    "id": 176,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -2,
-    "id": 178,
+    "id": 177,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -4,
-    "id": 179,
+    "id": 178,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -6,
-    "id": 180,
+    "id": 179,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -8,
-    "id": 181,
+    "id": 180,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -10,
-    "id": 182,
+    "id": 181,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -12,
-    "id": 183,
+    "id": 182,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -14,
-    "id": 184,
+    "id": 183,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -16,
-    "id": 185,
+    "id": 184,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -18,
-    "id": 186,
+    "id": 185,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -20,
-    "id": 187,
+    "id": 186,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -22,
-    "id": 188,
+    "id": 187,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -24,
-    "id": 189,
+    "id": 188,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -26,
-    "id": 190,
+    "id": 189,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -28,
-    "id": 191,
+    "id": 190,
     "class": "spike"
   },
   {
     "x": 9,
     "y": -30,
-    "id": 192,
+    "id": 191,
     "class": "spike"
   },
   {
     "x": 9,
     "y": 12,
-    "id": 193,
+    "id": 192,
     "class": "slime"
   },
   {
     "x": 8,
     "y": 6,
-    "id": 194,
+    "id": 193,
     "class": "spike"
   },
   {
     "x": 7,
     "y": 6,
-    "id": 195,
+    "id": 194,
     "class": "spike"
   },
   {
     "x": 6,
+    "y": 6,
+    "id": 195,
+    "class": "spike"
+  },
+  {
+    "x": 5,
     "y": 6,
     "id": 196,
     "class": "spike"
   },
   {
     "x": 5,
-    "y": 6,
-    "id": 197,
-    "class": "spike"
-  },
-  {
-    "x": 5,
     "y": 7,
-    "id": 198,
+    "id": 197,
     "class": "wall"
   },
   {
     "x": 6,
     "y": 7,
-    "id": 199,
+    "id": 198,
     "class": "wall"
   },
   {
     "x": 7,
     "y": 7,
-    "id": 200,
+    "id": 199,
     "class": "wall"
   },
   {
     "x": 8,
     "y": 7,
-    "id": 201,
+    "id": 200,
     "class": "wall"
   },
   {
     "x": 9,
     "y": 7,
-    "id": 202,
+    "id": 201,
     "class": "wall"
   },
   {
     "x": 7,
     "y": 12,
-    "id": 203,
+    "id": 202,
     "class": "slime"
   },
   {
     "x": 5,
     "y": 12,
-    "id": 204,
+    "id": 203,
     "class": "slime"
   },
   {
     "x": 3,
     "y": 12,
-    "id": 205,
+    "id": 204,
     "class": "goal"
   },
   {
     "x": 4,
     "y": 7,
-    "id": 206,
+    "id": 205,
     "class": "wall"
   },
   {
     "x": 3,
     "y": 7,
-    "id": 207,
+    "id": 206,
     "class": "wall"
   },
   {
     "x": 2,
+    "y": 7,
+    "id": 207,
+    "class": "wall"
+  },
+  {
+    "x": 1,
     "y": 7,
     "id": 208,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 7,
+    "y": 8,
     "id": 209,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 8,
+    "y": 9,
     "id": 210,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 9,
+    "y": 10,
     "id": 211,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 10,
+    "y": 11,
     "id": 212,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 11,
+    "y": 12,
     "id": 213,
     "class": "wall"
   },
   {
     "x": 1,
-    "y": 12,
-    "id": 214,
-    "class": "wall"
-  },
-  {
-    "x": 1,
     "y": 13,
-    "id": 215,
+    "id": 214,
     "class": "wall"
   },
   {
     "x": 3,
     "y": 6,
-    "id": 216,
+    "id": 215,
     "class": "spike"
   },
   {
     "x": 2,
     "y": 6,
-    "id": 217,
+    "id": 216,
     "class": "spike"
   },
   {
     "x": 1,
     "y": 6,
-    "id": 218,
+    "id": 217,
     "class": "spike"
   },
   {
     "x": 2,
-    "y": -47,
-    "id": 219,
-    "class": "coin"
-  },
-  {
-    "x": 2,
     "y": 8,
-    "id": 220,
+    "id": 218,
     "class": "coin"
   },
   {
     "x": -5,
     "y": -7,
-    "id": 221,
+    "id": 219,
     "class": "coin"
   },
   {
     "x": -2,
     "y": -13,
-    "id": 222,
+    "id": 220,
     "class": "coin"
   },
   {
     "x": 15,
     "y": -32,
-    "id": 223,
+    "id": 221,
     "class": "coin"
   },
   {
     "x": 12,
     "y": 5,
-    "id": 224,
+    "id": 222,
     "class": "coin"
   },
   {
     "x": 7,
     "y": 11,
+    "id": 223,
+    "class": "coin"
+  },
+  {
+    "x": 2,
+    "y": -45,
+    "id": 224,
+    "class": "checkpoint"
+  },
+  {
+    "x": 2,
+    "y": -46,
     "id": 225,
     "class": "coin"
   }

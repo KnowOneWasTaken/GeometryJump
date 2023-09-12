@@ -124,9 +124,8 @@ class Player extends Figure {
           if (move.y != 0) {
             if (move.y < 0) {
               grounded = true;
-              println(abs(vx));
-              if(abs(vx) > 1 && random(0,10) > 9) {
-               wallAnimation(int(x+w/2), int(y+h));
+              if (abs(vx) > 1 && random(0, 10) > 9) {
+                wallAnimation(int(x+w/2), int(y+h));
               }
             }
             vy = 0;
@@ -152,14 +151,14 @@ class Player extends Figure {
             }
           }
           if (f.getClass() == ch.getClass() || f.getClass() == go.getClass()) {
-            if (grounded) {
+            if (grounded && editModeOn == false) {
               if (int(checkpointBlock.x) != int(f.x/blockSize) || int(checkpointBlock.y) != int((f.y/blockSize)-1)) {
-                if (f.getClass() == go.getClass() && editModeOn == false) {
+                if (f.getClass() == go.getClass()) {
                   playSound(goalSound);
+                  //fill(255);
+                  //textSize(50);
+                  //text("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins and took "+framesSinceStarted+" frames!", width/2, height/2);
                   println("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins and took "+framesSinceStarted+" frames!");
-                  fill(255);
-                  textSize(50);
-                  text("You collected "+coinsCollected +" Coins!", width/2-textWidth("You collected ")/2, height/2);
                   JSONObject levelTimes;
                   try {
                     times = loadJSONArray("times.json");
@@ -200,6 +199,8 @@ class Player extends Figure {
                   cam.y = 0;
                   println("keyReleased(): Left Game, level: "+level);
                   playSound(tabChange, 0.7, true);
+                  level++;
+                  LevelX.img = levelXImage(level);
                 } else {
                   checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
                   checkpointAnimation(int(x+w/2), int(y+h));

@@ -1,12 +1,11 @@
 class BackgroundFigure extends Figure {
   PImage img, imgGlow;
-  float vx, vy;
   float posX, posY;
   float rotation, vRotate;
   BackgroundFigure(int x, int y, int w, int h) {
     super(x, y, w, h);
-    this.vx = random(-0.7, 0.7);
-    this.vy = random(-0.7, 0.7);
+    super.vx = random(-0.7, 0.7);
+    super.vy = random(-0.7, 0.7);
     posX = x;
     posY = y;
     rotation = int(random(0, 360));
@@ -61,23 +60,34 @@ class BackgroundFigure extends Figure {
   }
 
   void checkPosition() {
-    if (x > width + 3*w) {
-      posX = -3*w;
+    if (x > width + 2*w) {
+      posX = -2*w;
     }
-    if (x < -3*w) {
-      posX = width + 3*w;
+    if (x < -2*w) {
+      posX = width + 2*w;
     }
-    if (y > height + 3*h) {
-      posY = -3*h;
+    if (y > height + 2*h) {
+      posY = -2*h;
     }
-    if (y < -3*h) {
-      posY = height + 3*h;
+    if (y < -2*h) {
+      posY = height + 2*h;
     }
+  }
+  
+  void update() {
+   if(mousePressed) {
+      super.vx = super.vx + (mouseX-posX)*(1f/(dist(mouseX,mouseY,posX,posY)*dist(mouseX,mouseY,posX,posY))); 
+      super.vy = super.vy + (mouseY-posY)*(1f/(dist(mouseX,mouseY,posX,posY)*dist(mouseX,mouseY,posX,posY))); 
+   }
+   for(BackgroundFigure p : bgFigures) {
+     super.vx = super.vx + 10*((p.w/70f)*(p.posX-posX)*(1f/(dist(p.posX,p.posY,posX,posY)*dist(p.posX,p.posY,posX,posY)+0.0000000000001)))/w; 
+     super.vy = super.vy + 10*((p.w/70f)*(p.posY-posY)*(1f/(dist(p.posX,p.posY,posX,posY)*dist(p.posX,p.posY,posX,posY)+0.0000000000001)))/w; 
+   }
   }
 
   void move() {
-    posX = posX + vx;
-    posY = posY + vy;
+    posX = posX + super.vx;
+    posY = posY + super.vy;
     x = int(posX);
     y = int(posY);
   }

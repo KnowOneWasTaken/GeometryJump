@@ -1060,5 +1060,11 @@
     "y": -27,
     "id": 176,
     "class": "checkpoint"
+  },
+  {
+    "x": 1,
+    "y": -7,
+    "id": 177,
+    "class": "slime"
   }
 ]

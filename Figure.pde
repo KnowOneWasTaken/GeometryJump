@@ -10,8 +10,8 @@ class Figure {
     this.w = w;
     this. h = h;
     this.id = id;
-    vx = 0;
-    vy = 0;
+    this.vx = 0;
+    this.vy = 0;
     hitbox = new Hitbox(x, y, w, h);
   }
   Figure(int x, int y, int w, int h) {
@@ -20,8 +20,8 @@ class Figure {
     this.w = w;
     this. h = h;
     this.id = -1;
-    vx = 0;
-    vy = 0;
+    this.vx = 0;
+    this.vy = 0;
     hitbox = new Hitbox(x, y, w, h);
   }
 
@@ -32,6 +32,8 @@ class Figure {
     w = -1;
     h = -1;
     id = -1;
+    this.vx = 0;
+    this.vy = 0;
     hitbox = new Hitbox(x, y, w, h);
     hitbox.solid = false;
   }

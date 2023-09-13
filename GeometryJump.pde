@@ -4,9 +4,9 @@ SoundFile click, background1, background2, reset, jump, jumpSlime, collectCoin, 
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
-  particleWall, clear, ButtonEXIT, particleSlime, particleCheckpoint, bgSwitch, offSwitch, onSwitch;
+  particleWall, clear, ButtonEXIT, particleSlime, particleCheckpoint, bgSwitch, offSwitch, onSwitch, ButtonSwitch;
 
-Button Edit, SkipRight, SkipLeft, LevelX, Exit;
+Button Edit, SkipRight, SkipLeft, LevelX, Exit, SwitchEdit;
 SwitchButton BgMusicSwitch, SoundEffectsSwitch;
 
 ArrayList<Particle> particles = new ArrayList<Particle>();
@@ -19,8 +19,9 @@ boolean[] keysPressed = new boolean[65536]; //used to check if a key is pressed 
 JSONArray world; //The json-Array that contains the figures of the environment
 JSONArray times; //contains the times (frame-Counts) in which the player has completed the levels (best scores)
 String editMode = "wall"; //default for the world-edit mode: selects box/walls as the default to add to your world in editModeOn
+int editModeInt = 1;
 boolean editModeOn = false; //idicates if the editMode is on or off
-boolean gravity = true; //indicates if gravity is in editModeOn active or not
+boolean gravity = false; //indicates if gravity is in editModeOn active or not
 int coinsCollected = 0; //indicates how many coins the player has collected in a level
 float gameZoom = 1.0; //makes the gameplay bigger (zooms in), when you are on a smartphone
 float backgroundMusicAmp = 1;
@@ -37,7 +38,7 @@ int level = 1; //selects level 1 as default
 int levelAmount = 9; //indicates how many levels there are which should not be altered by in Game editing
 int framesSinceStarted = 0; //counts the frames, since the player has started a level (reset by death)
 
-BackgroundFigure[] bgFigures = new BackgroundFigure[15]; //Figures floating in Menue
+BackgroundFigure[] bgFigures = new BackgroundFigure[20]; //Figures floating in Menue
 boolean everythingLoaded = false;
 int loaded = 0;
 
@@ -65,6 +66,7 @@ void setup() {
   LevelX = new Button(true, BLevelX, BLevel1Glow, false, int(width/2-320*(width/1920f)), int(height/2-220*(height/1080f)), int(640*(width/1920f)), int(440*(height/1080f)), 1, false, true);
   SkipRight = new Button(true, right, rightGlow, false, int(width/2+(320+50)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
   SkipLeft = new Button(true, left, leftGlow, false, int(width/2+(-320-50-100)*(width/1920f)), int(height/2-75*(height/1080f)), int(100*(width/1920f)), int(150*(height/1080f)), 1, false, true);
+  SwitchEdit = new Button(true, ButtonSwitch, ButtonSwitch, false, int(width-180*(width/1920f)), int(height-90*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
 
   if (height > width) {
     SkipRight = new Button(true, right, rightGlow, false, int(width/2+(550+40)*(width/1920f)), int(height/2-75*(height/1080f)), int(200*(width/1920f)), int(150*(height/1080f)), 1, false, true);
@@ -100,6 +102,10 @@ void draw() {
 
     //displays the block, which is currently selected for edit,if you are in editModeOn
     showEditMode();
+
+    if (editModeOn) {
+      SwitchEdit.show();
+    }
 
     //plays the background1 sound in a loop when it's loaded
     playBackgroundMusic();
@@ -243,9 +249,9 @@ void showEditMode() {
       break;
     }
     if (img != null) {
-      image(img, blockSize/2, height - blockSize, blockSize/2, blockSize/2);
+      image(img, blockSize*2, blockSize, blockSize, blockSize);
     }
-    image(imgGlow, blockSize/4, height - blockSize-blockSize/4, blockSize, blockSize);
+    image(imgGlow, blockSize*2-blockSize/2, blockSize-blockSize/2, blockSize*2, blockSize*2);
   }
 }
 
@@ -286,26 +292,6 @@ void addFigure(String ObjectClass, int x, int y, int w, int h) {
   figure.setString("class", ObjectClass);
   figure.setInt("x", x);
   figure.setInt("y", y);
-  //switch(editMode) {
-  //case "wall":
-  //  worldFigures.add(new Box(x, y, w, h, id));
-  //  break;
-  //case "spike":
-  //  worldFigures.add(new Spike(x, y, w, h, id, 1));
-  //  break;
-  //case "slime":
-  //  worldFigures.add(new Slime(x, y, w, h, id));
-  //  break;
-  //case "coin":
-  //  worldFigures.add(new Coin(x, y, w, h, id));
-  //  break;
-  //case "checkpoint":
-  //  worldFigures.add(new Checkpoint(x, y, w, h, id));
-  //  break;
-  //case "goal":
-  //  worldFigures.add(new Goal(x, y, w, h, id));
-  //  break;
-  //}
   worldFigures.add(createFigure(ObjectClass, x, y, w, h, id));
   world.setJSONObject(id, figure);
 
@@ -425,7 +411,7 @@ void mouseReleased() {
   BgMusicSwitch.Released();
   SoundEffectsSwitch.Released();
   if (inGame) {
-    if (editModeOn && Edit.touch() == false && Exit.touch() == false) {
+    if (editModeOn && Edit.touch() == false && Exit.touch() == false && SwitchEdit.touch() == false) {
       if (editMode != "remove") {
         addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
         playSound(click, 0.5*SoundEffectsSwitch.timer, true);
@@ -447,6 +433,16 @@ void mouseReleased() {
       editModeOn = !editModeOn;
       Edit.pictureChange();
       playSound(click, 0.7*SoundEffectsSwitch.timer, true);
+    }
+    if (SwitchEdit.touch() && mouseButton==LEFT) {
+      if (editModeOn) {
+        if (editModeInt < 6) {
+          editModeInt++;
+        } else {
+          editModeInt = 0;
+        }
+        updateEditMode();
+      }
     }
     if (Exit.touch() && mouseButton==LEFT) {
       inGame = false;
@@ -522,27 +518,28 @@ void keyReleased() {
   if (key == 'r') {
     loadImages();
   }
-  if (key == 'b') {
-    editMode = "wall";
+  if (key == 'b' || key == '1') {
+    editModeInt = 1;
   }
-  if (key == 'n') {
-    editMode = "spike";
+  if (key == 'n' || key == '2') {
+    editModeInt = 2;
   }
-  if (key == 'm') {
-    editMode = "slime";
+  if (key == 'm' || key == '3') {
+    editModeInt = 3;
   }
-  if (key == ',') {
-    editMode = "remove";
+  if (key == ',' || key == '0') {
+    editModeInt = 0;
   }
-  if (key == 'c') {
-    editMode = "coin";
+  if (key == 'c' || key == '6') {
+    editModeInt = 6;
   }
-  if (key == 'v') {
-    editMode = "checkpoint";
+  if (key == 'v' || key == '5') {
+    editModeInt = 5;
   }
-  if (key == 'h') {
-    editMode = "goal";
+  if (key == 'h' || key == '4') {
+    editModeInt = 4;
   }
+  updateEditMode();
   if (key == 'g') {
     gravity = !gravity;
   }
@@ -571,6 +568,35 @@ void keyReleased() {
   if (key == 'u') {
     backgroundMusicAmp = 1-backgroundMusicAmp;
     println("Backgound Music volume set to: "+backgroundMusicAmp*100+"%");
+  }
+}
+
+void updateEditMode() {
+  switch(editModeInt) {
+  case 0:
+    editMode = "remove";
+    break;
+  case 1:
+    editMode = "wall";
+    break;
+  case 2:
+    editMode = "spike";
+    break;
+  case 3:
+    editMode = "slime";
+    break;
+  case 4:
+    editMode = "goal";
+    break;
+  case 5:
+    editMode = "checkpoint";
+    break;
+  case 6:
+    editMode = "coin";
+    break;
+  default:
+    editMode = "wall";
+    break;
   }
 }
 
@@ -610,6 +636,7 @@ void loadImages() {
   bgSwitch=loadImage("bg.png");
   offSwitch=loadImage("off.png");
   onSwitch=loadImage("on.png");
+  ButtonSwitch=loadImage("ButtonSwitch.png");
   loaded = 20;
   println("loadImages(): all images loaded");
 }
@@ -674,9 +701,6 @@ void playBackgroundMusic() {
     if (background1.isPlaying() == false) {
       playSound(background2, 0.2*backgroundMusicAmp);
     }
-    break;
-  default:
-    playSound(background1, 0.4*backgroundMusicAmp);
     break;
   }
 }

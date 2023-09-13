@@ -73,16 +73,24 @@ class BackgroundFigure extends Figure {
       posY = height + 2*h;
     }
   }
-  
+
   void update() {
-   if(mousePressed) {
-      super.vx = super.vx + (mouseX-posX)*(1f/(dist(mouseX,mouseY,posX,posY)*dist(mouseX,mouseY,posX,posY))); 
-      super.vy = super.vy + (mouseY-posY)*(1f/(dist(mouseX,mouseY,posX,posY)*dist(mouseX,mouseY,posX,posY))); 
-   }
-   for(BackgroundFigure p : bgFigures) {
-     super.vx = super.vx + 10*((p.w/70f)*(p.posX-posX)*(1f/(dist(p.posX,p.posY,posX,posY)*dist(p.posX,p.posY,posX,posY)+0.0000000000001)))/w; 
-     super.vy = super.vy + 10*((p.w/70f)*(p.posY-posY)*(1f/(dist(p.posX,p.posY,posX,posY)*dist(p.posX,p.posY,posX,posY)+0.0000000000001)))/w; 
-   }
+    if (gravity) {
+      if (mousePressed) {
+        super.vx = super.vx + 4*(mouseX-posX)*(1f/(dist(mouseX, mouseY, posX, posY)*dist(mouseX, mouseY, posX, posY)));
+        super.vy = super.vy + 4*(mouseY-posY)*(1f/(dist(mouseX, mouseY, posX, posY)*dist(mouseX, mouseY, posX, posY)));
+        fill(255);
+        stroke(255, 4*100000*255/(dist(posX, posY, mouseX, mouseY)*dist(posX, posY, mouseX, mouseY)+1));
+        line(posX, posY, mouseX, mouseY);
+      }
+      for (BackgroundFigure p : bgFigures) {
+        super.vx = super.vx + 3*((p.w/70f)*(p.posX-posX)*(1f/(dist(p.posX, p.posY, posX, posY)*dist(p.posX, p.posY, posX, posY)+0.0000000000001)))/w;
+        super.vy = super.vy + 3*((p.w/70f)*(p.posY-posY)*(1f/(dist(p.posX, p.posY, posX, posY)*dist(p.posX, p.posY, posX, posY)+0.0000000000001)))/w;
+        fill(255);
+        stroke(255, 100000*255/(w*3*(p.w/70f)*dist(posX, posY, p.posX, p.posY)*dist(posX, posY, p.posX, p.posY)+1));
+        line(posX, posY, p.posX, p.posY);
+      }
+    }
   }
 
   void move() {

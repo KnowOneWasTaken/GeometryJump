@@ -4,9 +4,10 @@ SoundFile click, background1, background2, reset, jump, jumpSlime, collectCoin, 
 
 //These are variable declarations used throughout the program. They include objects such as figures, images, player, camera, and various flags and settings.
 PImage spike, wall, play, spikeGlow, slime, slimeGlow, wallGlow, remove, coin, coinGlow, checkpoint, checkpointGlow, BEditModeOn, BEditModeOff, BLevel1, BLevel1Glow, BLevel2, right, rightGlow, left, leftGlow, BLevelX, goalGlow, particleStar,
-  particleWall, clear, ButtonEXIT, particleSlime, particleCheckpoint;
+  particleWall, clear, ButtonEXIT, particleSlime, particleCheckpoint, bgSwitch, offSwitch, onSwitch;
 
 Button Edit, SkipRight, SkipLeft, LevelX, Exit;
+SwitchButton BgMusicSwitch, SoundEffectsSwitch;
 
 ArrayList<Particle> particles = new ArrayList<Particle>();
 
@@ -55,7 +56,8 @@ void setup() {
   co = new Coin();
   ch = new Checkpoint();
   go = new Goal();
-
+  BgMusicSwitch = new SwitchButton(bgSwitch, offSwitch, onSwitch, width-100, 20, 80, 40);
+  SoundEffectsSwitch= new SwitchButton(bgSwitch, offSwitch, onSwitch, width-100, 80, 80, 40);
   cam = new Cam(0, 0, 1920, 1080);
 
   Edit = new Button(true, BEditModeOff, BEditModeOn, false, int(width-180*(width/1920f)), int(20*(height/1080f)), int(160*(width/1920f)), int(80*(height/1080f)));
@@ -104,13 +106,34 @@ void draw() {
     Edit.show();
     Exit.show();
   } else {
+    fill(255);
+    textSize(500);
+    textSize(30);
+    text("Background-Music: ", width-350, 50);
+    text("Sound-Effects: ", width-350, 110);
+    BgMusicSwitch.show();
+    SoundEffectsSwitch.show();
+    backgroundMusicAmp = BgMusicSwitch.timer;
+
     if (everythingLoaded) {
-      playBackgroundMusic();
-      LevelX.show();
-      SkipRight.show();
-      SkipLeft.show();
+      try {
+        try {
+          playBackgroundMusic();
+        }
+        catch(Exception e2) {
+          println("Error in Draw() while playing background - music: ");
+          println(e2);
+        }
+        LevelX.show();
+        SkipRight.show();
+        SkipLeft.show();
+      }
+      catch(Exception e) {
+        println("Error in Draw() while displaying UI and playing background - music: ");
+        println(e);
+      }
     } else {
-      playSound(loading, 0.7);
+      playSound(loading, 0.7*SoundEffectsSwitch.timer);
       fill(255-loaded*2.55, loaded*2.55, 0);
       textSize(200);
       text(loaded+"%", width/2-180, height/2+67);
@@ -399,11 +422,13 @@ void reloadFigures(String fileName) {
 
 //This function is called when the mouse button is released. It determines the action based on the current edit mode and mouse position.
 void mouseReleased() {
+  BgMusicSwitch.Released();
+  SoundEffectsSwitch.Released();
   if (inGame) {
     if (editModeOn && Edit.touch() == false && Exit.touch() == false) {
       if (editMode != "remove") {
         addFigure(editMode, int(cam.getInWorldCoordBlock(mouseX, mouseY).x), int(cam.getInWorldCoordBlock(mouseX, mouseY).y), 1, 1);
-        playSound(click, 0.5, true);
+        playSound(click, 0.5*SoundEffectsSwitch.timer, true);
         //updateIDs();
       } else {
         Figure f = getFigureAt(cam.getInWorldCoord(mouseX, mouseY));
@@ -412,7 +437,7 @@ void mouseReleased() {
           removeFigure(f.id);
           updateIDs();
           println("mouseReleased(): Figure removed");
-          playSound(click, 0.5, true);
+          playSound(click, 0.5*SoundEffectsSwitch.timer, true);
         } else {
           println("mouseReleased(): RemoveFigure: No Figure at this position found!");
         }
@@ -421,31 +446,35 @@ void mouseReleased() {
     if (Edit.touch() && mouseButton==LEFT) {
       editModeOn = !editModeOn;
       Edit.pictureChange();
-      playSound(click, 0.7, true);
+      playSound(click, 0.7*SoundEffectsSwitch.timer, true);
     }
     if (Exit.touch() && mouseButton==LEFT) {
       inGame = false;
+      BgMusicSwitch.hitbox = true;
+      SoundEffectsSwitch.hitbox = true;
       cam.x = 0;
       cam.y = 0;
       println("mouseReleased(): Left Game, level: "+level);
-      playSound(tabChange, 0.7, true);
+      playSound(tabChange, 0.7*SoundEffectsSwitch.timer, true);
       particles.removeAll(particles);
     }
   } else if (everythingLoaded) {
     coinAnimation(mouseX, mouseY);
-    playSound(collectCoin, 0.2, true);
+    playSound(collectCoin, 0.2*SoundEffectsSwitch.timer, true);
     if (LevelX.touch() && mouseButton==LEFT) {
       println("mouseReleased(): Button pressed: Start Level "+level);
       inGame = true;
+      BgMusicSwitch.hitbox = false;
+      SoundEffectsSwitch.hitbox = false;
       particles.removeAll(particles);
       startLevel(level);
-      playSound(tabChange, 0.7, true);
+      playSound(tabChange, 0.7*SoundEffectsSwitch.timer, true);
     }
     if (SkipRight.touch() && mouseButton==LEFT) {
       println("mouseReleased(): Button pressed: SkipRight: "+level);
       level++;
       LevelX.img = levelXImage(level);
-      playSound(click, 0.7, true);
+      playSound(click, 0.7*SoundEffectsSwitch.timer, true);
     }
     if (SkipLeft.touch() && mouseButton==LEFT) {
       if (level > 1) {
@@ -453,7 +482,7 @@ void mouseReleased() {
         LevelX.img = levelXImage(level);
         println("mouseReleased(): Button pressed: SkipLeft: "+level);
       }
-      playSound(click, 0.7, true);
+      playSound(click, 0.7*SoundEffectsSwitch.timer, true);
     }
   } else {
     coinAnimation(mouseX, mouseY);
@@ -524,10 +553,19 @@ void keyReleased() {
   if (key == ENTER) {
     if (inGame) {
       inGame = false;
+      BgMusicSwitch.hitbox = true;
+      SoundEffectsSwitch.hitbox = true;
       cam.x = 0;
       cam.y = 0;
       println("keyReleased(): Left Game, level: "+level);
       particles.removeAll(particles);
+    } else {
+      inGame = true;
+      BgMusicSwitch.hitbox = false;
+      SoundEffectsSwitch.hitbox = false;
+      particles.removeAll(particles);
+      startLevel(level);
+      playSound(tabChange, 0.7*SoundEffectsSwitch.timer, true);
     }
   }
   if (key == 'u') {
@@ -569,6 +607,9 @@ void loadImages() {
   ButtonEXIT = loadImage("ButtonEXIT.png");
   particleSlime = loadImage("particleSlime.png");
   particleCheckpoint = loadImage("particleCheckpoint.png");
+  bgSwitch=loadImage("bg.png");
+  offSwitch=loadImage("off.png");
+  onSwitch=loadImage("on.png");
   loaded = 20;
   println("loadImages(): all images loaded");
 }
@@ -615,27 +656,27 @@ void playSound(SoundFile sound, float amp, boolean multiple) {
   if (sound != null) {
     if (sound.isPlaying() == false || multiple) {
       sound.play();
-      sound.amp(amp);
-    } else if(sound.isPlaying() == true) {
       sound.amp(amp+0.000000001);
+    } else if (sound.isPlaying() == true) {
+      sound.amp(amp+0.000000001);
+    }
   }
-}
 }
 
 void playBackgroundMusic() {
   switch(int(random(0, 2))) {
   case 0:
     if (background2.isPlaying() == false) {
-      playSound(background1, 0.8*backgroundMusicAmp);
+      playSound(background1, 0.4*backgroundMusicAmp);
     }
     break;
   case 1:
     if (background1.isPlaying() == false) {
-      playSound(background2, 0.5*backgroundMusicAmp);
+      playSound(background2, 0.2*backgroundMusicAmp);
     }
     break;
   default:
-    playSound(background1, 0.8*backgroundMusicAmp);
+    playSound(background1, 0.4*backgroundMusicAmp);
     break;
   }
 }

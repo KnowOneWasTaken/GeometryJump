@@ -41,7 +41,7 @@ class Player extends Figure {
       player.y = -blockSize;
     }
     if (worldFigures.size() != 0) {
-      playSound(reset, 0.5, true);
+      playSound(reset, 0.5*SoundEffectsSwitch.timer, true);
     }
     vx = 0;
     vy = 0;
@@ -51,7 +51,7 @@ class Player extends Figure {
     if (grounded) {
       if (getFigureAt(int(x+w/15f), int(y-blockSize/2)).hitbox.solid == false && getFigureAt(int(x+w-w/15f), int(y-blockSize/2)).hitbox.solid == false) {
         vy = vy - 18;
-        playSound(jump, 0.5, true);
+        playSound(jump, 0.5*SoundEffectsSwitch.timer, true);
         //println("Player: jump");
       }
     }
@@ -114,7 +114,7 @@ class Player extends Figure {
             //}
           }
           if (f.getClass() == co.getClass()&& editModeOn == false) {
-            playSound(collectCoin, 0.7, true);
+            playSound(collectCoin, 0.7*SoundEffectsSwitch.timer, true);
             delID = f.id;
             coinAnimation(int(x+w/2), int(y+h));
             println("Player: hitbox(): Coin collected");
@@ -145,7 +145,7 @@ class Player extends Figure {
           if (f.getClass() == sl.getClass()) {
             if (grounded) {
               vy = vy - 50;
-              playSound(jumpSlime, 0.5, true);
+              playSound(jumpSlime, 0.5*SoundEffectsSwitch.timer, true);
               slimeAnimation(int(x+w/2), int(y+h));
               //println("Player: hitbox(): Slime jump");
             }
@@ -154,7 +154,7 @@ class Player extends Figure {
             if (grounded && editModeOn == false) {
               if (int(checkpointBlock.x) != int(f.x/blockSize) || int(checkpointBlock.y) != int((f.y/blockSize)-1)) {
                 if (f.getClass() == go.getClass()) {
-                  playSound(goalSound);
+                  playSound(goalSound, 0.6*SoundEffectsSwitch.timer);
                   //fill(255);
                   //textSize(50);
                   //text("Goal reached! Level " + level+" finished. You have collected "+coinsCollected+" Coins and took "+framesSinceStarted+" frames!", width/2, height/2);
@@ -195,17 +195,19 @@ class Player extends Figure {
                   }
                   delay(2000);
                   inGame = false;
+                  BgMusicSwitch.hitbox = true;
+                  SoundEffectsSwitch.hitbox = true;
                   cam.x = 0;
                   cam.y = 0;
                   println("keyReleased(): Left Game, level: "+level);
-                  playSound(tabChange, 0.7, true);
+                  playSound(tabChange, 0.7*SoundEffectsSwitch.timer, true);
                   level++;
                   LevelX.img = levelXImage(level);
                 } else {
                   checkpointBlock = new PVector(int(f.x/blockSize), int((f.y/blockSize)-1));
                   checkpointAnimation(int(x+w/2), int(y+h));
                   println("Player: hitbox(): Checkpoint reached: "+checkpointBlock.x + ", "+checkpointBlock.y+ "; Vector: "+new PVector(int(f.x/blockSize), int((f.y/blockSize)-1)));
-                  playSound(collectCoin, 0.5, true);
+                  playSound(collectCoin, 0.5*SoundEffectsSwitch.timer, true);
                 }
               }
             }

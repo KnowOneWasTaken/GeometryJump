@@ -508,8 +508,13 @@ Figure getFigureAt(PVector v) {
 }
 
 void keyPressed() {
+  try {
   keysPressed[keyCode] = true;
   keysPressed[key] = true;
+  } catch(Exception e) {
+    println("Error while checking for keys: keyCode: "+keyCode+"; key: "+key);
+    println(e);
+  }
 }
 
 void keyReleased() {

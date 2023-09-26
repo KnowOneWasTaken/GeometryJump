@@ -337,3 +337,11 @@ windows-amd64/source/Particle.pde
 windows-amd64/source/Player.pde
 windows-amd64/source/Slime.pde
 windows-amd64/source/Spike.pde
+windows-amd64/data/bg.png
+windows-amd64/data/ButtonSwitch.png
+windows-amd64/data/level10.json
+windows-amd64/data/off.png
+windows-amd64/data/on.png
+windows-amd64/source/SwitchButton.pde
+data/world.json
+data/world.json
